@@ -4,7 +4,8 @@
     "page/API/index",
     "page/cloud/index",
     "page/extend/index",
-    "page/animation/index"
+    "page/animation/index",
+    "page/home/index"
   ],
   "usingComponents": {
     "mp-navigation-bar": "/component/navigation-bar/navigation-bar"
@@ -462,6 +463,12 @@
         "iconPath": "@iconPathCloud",
         "selectedIconPath": "@selectedIconPathCloud",
         "text": "云开发"
+      },
+      {
+        "pagePath": "page/home/index",
+        "iconPath": "@iconPathCloud",
+        "selectedIconPath": "@selectedIconPathCloud",
+        "text": "首页"
       }
     ]
   },
