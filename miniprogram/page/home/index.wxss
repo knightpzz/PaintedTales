@@ -1,13 +1,30 @@
-.avatar {
-  width: 200rpx;
-  /* 设置宽度 */
-  height: 200rpx;
-  /* 设置高度 */
-  border-radius: 50%;
-  /* 圆形效果 */
-  object-fit: cover;
-  /* 保持图片比例并裁剪 */
+.user-info {
+  position: fixed;
+  top: 100rpx;
+  left: 20rpx;
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.95); /* 稍微亮一点 */
+  padding: 16rpx 24rpx;
+  border-radius: 24rpx;
+  z-index: 999;
+  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.1); /* 可选：添加阴影更立体 */
 }
+
+.avatar {
+  width: 100rpx;   /* 原来是 80rpx */
+  height: 100rpx;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 16rpx; /* 多一点间距 */
+}
+
+.username {
+  font-size: 32rpx;  /* 原来是 28rpx */
+  color: #222;
+  font-weight: bold;
+}
+
 
 /* 页面整体容器，100vh高，垂直居中 */
 .container {
@@ -182,3 +199,23 @@ swiper-item {
   height: 100%;
   object-fit: contain;
 }
+
+.history-btn {
+  position: fixed;
+  top: 120rpx;   /* 原来是 40rpx，改成 120rpx 往下挪 */
+  right: 30rpx;
+  display: flex;
+  align-items: center;
+  padding: 10rpx 16rpx;
+  background-color: #ffffff;
+  border-radius: 32rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.history-icon {
+  width: 36rpx;
+  height: 36rpx;
+  margin-right: 8rpx;
+}
+

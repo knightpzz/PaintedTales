@@ -1,15 +1,17 @@
 <view class="container">
 
 
-  <view class="user-info">
-    <text>欢迎，{{userInfo.nickName}}</text>
-    <!-- 如果有头像，显示头像 -->
-    <image wx:if="{{userInfo.avatarUrl}}" src="../../image/maodie.png" class="avatar"></image>
+<!-- 用户信息：放到页面右上角 -->
+<view class="user-info">
+  <image wx:if="{{userInfo.avatarUrl}}" src="../../image/maodie.png" class="avatar"></image>
+  <image wx:else src="../../image/maodie.png" class="avatar"></image>
+  <text class="username">{{userInfo.nickName}}</text>
+</view>
 
-    <!-- 如果没有头像，显示默认头像 -->
-    <image wx:else src="../../image/maodie.jpeg" class="avatar"></image>
-  </view>
-
+<view class="history-btn" style="top: {{navTop}}rpx;" bindtap="goToHistory">
+  <image src="../../image/play.png" class="history-icon"></image>
+  <text>历史记录</text>
+</view>
 
   <!-- 输入框 -->
   <view class="input-section">

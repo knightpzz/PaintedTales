@@ -1,0 +1,22 @@
+<view class="custom-nav">
+  <image class="back-icon" src="../../image/wechat.png" bindtap="goBack"></image>
+  <text class="nav-title">历史记录</text>
+</view>
+
+<view class="history-page">
+  <block wx:for="{{historyList}}" wx:key="id">
+    <view class="history-item">
+      <text>关键词：{{item.inputText}}</text>
+
+      <swiper class="swiper" indicator-dots circular autoplay>
+        <block wx:for="{{item.images}}" wx:key="*this">
+          <swiper-item>
+            <image src="{{item}}" mode="aspectFill" class="image"/>
+          </swiper-item>
+        </block>
+      </swiper>
+
+      <text class="timestamp">生成时间：{{item.createdAt}}</text>
+    </view>
+  </block>
+</view>
