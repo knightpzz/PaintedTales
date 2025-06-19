@@ -7,6 +7,18 @@ Page({
     imageList: [] // 存放五张图地址
   },
 
+  
+  
+
+
+  
+
+  goToHistory() {
+    wx.navigateTo({
+      url: '/page/history/index'
+    })
+  },
+
   // 页面加载时获取全局用户信息
   onLoad() {
     const userInfo = getApp().globalData.userInfo || {};  // 获取全局数据中的用户信息
@@ -117,11 +129,29 @@ Page({
     Promise.all(promises).then(urls => {
       wx.hideLoading();
       console.log('图片数组:', urls);
+
+      // ⭐ 保存历史记录到数据库
+      const db = wx.cloud.database()
+      db.collection('history').add({
+        data: {
+          inputText: this.data.userInput || '', // 可选输入关键词
+          images: urls,
+          createdAt: new Date()
+        },
+        success: res => {
+          console.log('✅ 历史记录已保存', res);
+        },
+        fail: err => {
+          console.error('❌ 保存失败', err);
+        }
+      })
       this.setData({
         imageList: urls,
         swiperKey: Date.now() // 添加动态 key 强制重新渲染
         // swiperKey: Date.now() 
       });
+
+      
     }).catch(err => {
       wx.hideLoading();
       wx.showToast({ title: '部分图片生成失败', icon: 'none' });

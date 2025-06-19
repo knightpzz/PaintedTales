@@ -199,3 +199,23 @@ swiper-item {
   height: 100%;
   object-fit: contain;
 }
+
+.history-btn {
+  position: fixed;
+  top: 120rpx;   /* 原来是 40rpx，改成 120rpx 往下挪 */
+  right: 30rpx;
+  display: flex;
+  align-items: center;
+  padding: 10rpx 16rpx;
+  background-color: #ffffff;
+  border-radius: 32rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.history-icon {
+  width: 36rpx;
+  height: 36rpx;
+  margin-right: 8rpx;
+}
+

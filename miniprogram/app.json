@@ -6,7 +6,8 @@
     "page/extend/index",
     "page/animation/index",
     "page/home/index",
-    "page/login/index" 
+    "page/login/index" ,
+    "page/history/index"
   ],
 
  
