@@ -1,10 +1,18 @@
 Page({
   data: {
+    userInfo: {},    // 存储用户信息
     userInput: '',
     reply: '',
     descriptionList: [], // 五段插画描述，建议从豆包返回结果中解析
     imageList: [] // 存放五张图地址
   },
+
+  // 页面加载时获取全局用户信息
+  onLoad() {
+    const userInfo = getApp().globalData.userInfo || {};  // 获取全局数据中的用户信息
+    this.setData({ userInfo });
+  },
+
   onInput(e) {
     this.setData({
       userInput: e.detail.value
