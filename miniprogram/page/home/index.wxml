@@ -1,3 +1,11 @@
 <view class="container">
-  <text>欢迎来到 Home 页面！</text>
+  <view class="input-section">
+    <input type="text" placeholder="请输入你的问题" bindinput="onInput" value="{{userInput}}" />
+    <button bindtap="submitToDoubao">提交</button>
+  </view>
+
+  <view class="result-section">
+    <text>豆包回复：</text>
+    <view class="reply">{{reply}}</view>
+  </view>
 </view>

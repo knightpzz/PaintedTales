@@ -1,4 +1,5 @@
 {
-  "renderer": "skyline",
-  "navigationStyle": "custom"
+  "navigationBarTitleText": "豆包问答",
+  "navigationStyle": "custom",
+  "renderer": "skyline"
 }
