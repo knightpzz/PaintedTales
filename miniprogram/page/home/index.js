@@ -25,6 +25,7 @@ Page({
     wx.request({
       url: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions',
       method: 'POST',
+      timeout: 60000, 
       header: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer cae5d8c2-cd63-463c-8986-f5cb3f1c3ece'  // ⚠️生产中建议移到后端
@@ -45,8 +46,12 @@ Page({
       },
       success: (res) => {
         wx.hideLoading();
-        const reply = res.data?.choices?.[0]?.message?.content?.[0]?.text || '未获取到回复';
-        this.setData({ reply });
+        const content = res.data?.choices?.[0]?.message?.content;
+        if (typeof content === 'string' && content.trim() !== '') {
+          this.setData({ reply: content });
+        } else {
+          this.setData({ reply: '未获取到回复' });
+        }
       },
       fail: (err) => {
         wx.hideLoading();
