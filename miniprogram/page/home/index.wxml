@@ -10,20 +10,48 @@
 <image wx:else src="../../image/maodie.jpeg" class="avatar"></image>
   </view>
 
+
+  <!-- 输入框 -->
   <view class="input-section">
-    <input
-      class="input-box"
-      type="text"
-      placeholder="请输入你的问题"
-      bindinput="onInput"
-      value="{{userInput}}"
-      confirm-type="done"
-    />
+    <input class="input-box" type="text" placeholder="请输入不超过5个关键字，用空格隔开" bindinput="onInput" value="{{userInput}}" />
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="button-section">
     <button class="submit-btn" bindtap="submitToDoubao">提交</button>
   </view>
 
-  <view class="result-section" wx:if="{{reply}}">
+  <!-- 豆包回复 -->
+  <!-- <view class="result-section" wx:if="{{reply}}">
     <text class="result-label">豆包回复：</text>
     <view class="reply">{{reply}}</view>
-  </view>
+  </view> -->
+
+<!-- <view wx:if="{{imageList.length > 0}}">
+<text>第一张图预览：</text>
+<image src="{{imageList[0]}}" mode="widthFix" style="width: 100%;" />
+</view> -->
+
+<!-- 插画轮播图展示 -->
+<!-- 图片轮播，仅在 imageList 有内容时显示 -->
+<view wx:if="{{imageList.length > 0}}">
+  <view>{{swiperKey}}</view>
+  <swiper
+    class="swiper"
+    circular
+    indicator-dots
+    autoplay
+    interval="3000"
+    duration="500"
+    key="{{swiperKey}}"
+  >
+    <block wx:for="{{imageList}}" wx:key="index">
+      <swiper-item class="swiper-item">
+        <image src="{{item}}" mode="aspectFit" class="image" />
+      </swiper-item>
+    </block>
+  </swiper>
+</view>
+
+
 </view>
