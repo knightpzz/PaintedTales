@@ -77,28 +77,28 @@ Page({
         wx.hideLoading();
         const story = res.data?.choices?.[0]?.message?.content;
         console.log('豆包童话内容：', story);
-      
+
         if (typeof story === 'string' && story.trim()) {
           this.setData({ reply: story });
-      
+
           // 🔹 构造插画生成 Prompt
           const cleanStory = story.replace(/###\s*/g, '');  // 可选：去掉“### 第一段”
           const illustrationPrompt = `请以下面这五段童话为基础，每段童话生成一张插画，插画与文字内容相匹配，童话如下：\n${cleanStory}`;
-      
+
           // console.log('提交给插画生成的提示语：\n', illustrationPrompt);
           const paragraphs = story
-          .split(/\n{2,}|\r\n\r\n/)
-          .map(p => p.trim())
-          .filter(p => p.length > 10)
-          .slice(0, 5); // 最多5段
+            .split(/\n{2,}|\r\n\r\n/)
+            .map(p => p.trim())
+            .filter(p => p.length > 10)
+            .slice(0, 5); // 最多5段
 
-        if (paragraphs.length === 0) {
-          wx.showToast({ title: '童话分段失败', icon: 'none' });
-          return;
-        }
-        this.setData({ descriptionList: paragraphs }, () => {
+          if (paragraphs.length === 0) {
+            wx.showToast({ title: '童话分段失败', icon: 'none' });
+            return;
+          }
+          this.setData({ descriptionList: paragraphs }, () => {
             this.generateAllImages();
-        });
+          });
         } else {
           wx.showToast({ title: '生成失败', icon: 'none' });
         }
@@ -117,7 +117,7 @@ Page({
     Promise.all(promises).then(urls => {
       wx.hideLoading();
       console.log('图片数组:', urls);
-      this.setData({ 
+      this.setData({
         imageList: urls,
         swiperKey: Date.now() // 添加动态 key 强制重新渲染
         // swiperKey: Date.now() 
