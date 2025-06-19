@@ -74,3 +74,93 @@
   white-space: normal;
   text-align: left;
 }
+
+.container {
+  padding: 30rpx;
+}
+
+.image-swiper {
+  width: 100%;
+  height: 600rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  background: #fff;
+}
+
+.slide-img {
+  width: 100%;
+  height: 100%;
+}
+
+.image-swiper {
+  width: 100%;
+  height: 500rpx;
+  margin-top: 40rpx;
+}
+
+.slide-img {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+}
+.image-section {
+  margin-top: 40rpx;
+}
+
+.image-swiper {
+  width: 100%;
+  height: 500rpx;
+  border-radius: 12rpx;
+  background-color: #fafafa;
+}
+
+.image-section {
+  margin-top: 40rpx;
+}
+
+.image-swiper {
+  width: 100%;
+  height: 500rpx;
+}
+
+swiper-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.slide-img {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+}
+.swiper {
+  width: 100%;
+  height: 500rpx;
+  background: #f4f4f4;
+  border-radius: 16rpx;
+}
+
+.swiper-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 500rpx; /* 必须设置 */
+}
+
+.swiper {
+  width: 100%;
+  height: 400rpx;
+}
+.swiper-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
