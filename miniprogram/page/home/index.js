@@ -1,7 +1,14 @@
 Page({
   data: {
+    userInfo: {},    // 存储用户信息
     userInput: '',
     reply: ''
+  },
+
+  // 页面加载时获取全局用户信息
+  onLoad() {
+    const userInfo = getApp().globalData.userInfo || {};  // 获取全局数据中的用户信息
+    this.setData({ userInfo });
   },
 
   onInput(e) {

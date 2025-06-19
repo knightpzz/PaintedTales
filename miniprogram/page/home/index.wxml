@@ -1,4 +1,15 @@
 <view class="container">
+
+
+  <view class="user-info">
+    <text>欢迎，{{userInfo.nickName}}</text>
+    <!-- 如果有头像，显示头像 -->
+  <image wx:if="{{userInfo.avatarUrl}}" src="../../image/maodie.jpeg" class="avatar"></image>
+
+<!-- 如果没有头像，显示默认头像 -->
+<image wx:else src="../../image/maodie.jpeg" class="avatar"></image>
+  </view>
+
   <view class="input-section">
     <input
       class="input-box"

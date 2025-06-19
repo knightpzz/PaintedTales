@@ -4,6 +4,38 @@ const themeListeners = []
 global.isDemo = true
 App({
 
+  globalData: {
+    userInfo: null, // 用来存储用户信息
+    openid: null     // 用户的 openid
+  },
+
+  
+// 获取用户 openid
+getUserOpenId(callback) {
+  const self = this;
+  if (self.globalData.openid) {
+    callback(null, self.globalData.openid);
+  } else {
+    wx.login({
+      success() {
+        wx.cloud.callFunction({
+          name: 'login',
+          data: {
+            action: 'openid'
+          },
+          success: res => {
+            self.globalData.openid = res.result.openid;
+            callback(null, self.globalData.openid);
+          },
+          fail: err => {
+            callback(err);
+          }
+        });
+      }
+    });
+  }
+},
+
   onLaunch(opts, data) {
     const that = this
     const canIUseSetBackgroundFetchToken = wx.canIUse('setBackgroundFetchToken')
