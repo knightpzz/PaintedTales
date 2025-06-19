@@ -1,3 +1,11 @@
+
+.avatar {
+  width: 200rpx;      /* 设置宽度 */
+  height: 200rpx;     /* 设置高度 */
+  border-radius: 50%; /* 圆形效果 */
+  object-fit: cover;  /* 保持图片比例并裁剪 */
+}
+
 /* 页面整体容器，100vh高，垂直居中 */
 .container {
   height: 100vh;
