@@ -10,5 +10,5 @@
 <view class="container">
   <text>欢迎，{{userInfo.nickName}}</text>
   <image wx:if="{{userInfo.avatarUrl}}" src="../../image/maodie.png" class="avatar"></image>
-  <image wx:else src="../../image/maodie.jpeg" class="avatar"></image> <!-- 默认头像 -->
+  <image wx:else src="../../image/maodie.png" class="avatar"></image> <!-- 默认头像 -->
 </view>

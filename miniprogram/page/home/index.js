@@ -21,6 +21,10 @@ Page({
 
   // 页面加载时获取全局用户信息
   onLoad() {
+
+    wx.cloud.init({
+      env: 'cloud1-8gmijxcx249b2dbf'  // 请使用正确的环境ID
+    });
     const userInfo = getApp().globalData.userInfo || {};  // 获取全局数据中的用户信息
     this.setData({ userInfo });
   },
@@ -142,7 +146,8 @@ Page({
           console.log('✅ 历史记录已保存', res);
         },
         fail: err => {
-          console.error('❌ 保存失败', err);
+          console.error('❌ 保存失败 ❌', err);
+          wx.showToast({ title: '保存失败', icon: 'none' });
         }
       })
       this.setData({
@@ -178,6 +183,8 @@ Page({
         },
         success: (res) => {
           console.log('请求成功，返回数据：', res);
+
+          
           const url = res.data?.data?.[0]?.url;
           url ? resolve(url) : reject('无效URL');
         },
@@ -202,23 +209,26 @@ Page({
   },
 
   saveImage(url) {
-    wx.downloadFile({
-      url,
-      success: (res) => {
-        if (res.statusCode === 200) {
-          wx.saveImageToPhotosAlbum({
-            filePath: res.tempFilePath,
-            success: () => wx.showToast({ title: '保存成功' }),
-            fail: (err) => {
-              wx.showToast({ title: '保存失败', icon: 'none' });
-              console.error('保存失败：', err);
-            }
-          });
-        }
+    const db = wx.cloud.database();
+    // 保存到数据库
+    db.collection('history').add({
+      data: {
+        inputText: this.data.userInput || '', // 你可以使用用户输入的数据
+        images: url,
+        createdAt: new Date()  // 保存当前时间
       },
-      fail: (err) => {
-        console.error('下载失败：', err);
+      success: res => {
+        console.log('保存成功', res);
+        this.setData({
+          imageList: [...this.data.imageList, url], // 更新本地的 imageList 数据
+          swiperKey: Date.now() // 更新 swiperKey 强制重新渲染
+        });
+      },
+      fail: err => {
+        console.error('保存失败', err);
+        wx.showToast({ title: '保存失败', icon: 'none' });
       }
     });
   }
+  
 });
