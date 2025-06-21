@@ -4,25 +4,32 @@
 </view>
 
 <scroll-view scroll-y="true" style="height: 100vh;">
-<view class="history-page">
-  
-  <block wx:for="{{historyList}}" wx:key="id">
-    <view class="history-item">
-    
-      <text>关键词：{{item.inputText}}</text>
-      <!-- <button bindtap="generateTestPDF">测试生成 PDF</button> -->
-      <swiper class="swiper" indicator-dots circular autoplay>
-        <block wx:for="{{item.images}}" wx:key="*this">
-          <swiper-item>
-            <image src="{{item}}" mode="aspectFill" class="image"/>
-          </swiper-item>
-        </block>
-      </swiper>
+  <view class="history-page">
 
-      <text class="timestamp">生成时间：{{item.createdAt}}</text>
-      <button bindtap="downloadPDF" data-item="{{item}}">下载 PDF</button>
-    </view>
-  </block>
-</view>
-<view class="bottom-gap" style="height: 100rpx;"></view>
+    <block wx:for="{{historyList}}" wx:key="id">
+      <view class="history-item">
+        <text>关键词：{{item.inputText}}</text>
+
+        <!-- 判断记录类型：图片或视频 -->
+        <view wx:if="{{item.type === 'image'}}">
+          <swiper class="swiper" indicator-dots circular autoplay>
+            <block wx:for="{{item.images}}" wx:key="*this">
+              <swiper-item>
+                <image src="{{item}}" mode="aspectFill" class="image" />
+              </swiper-item>
+            </block>
+          </swiper>
+        </view>
+
+        <view wx:elif="{{item.type === 'video'}}">
+          <video src="{{item.videoUrl}}" controls class="video-player" initial-time="0" autoplay="false" loop="false" binderror="onVideoError"></video>
+        </view>
+
+
+        <text class="timestamp">生成时间：{{item.createdAt}}</text>
+      </view>
+    </block>
+
+  </view>
+  <view class="bottom-gap" style="height: 100rpx;"></view>
 </scroll-view>
