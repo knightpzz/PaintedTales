@@ -274,13 +274,13 @@ Page({
           const status = res.data?.status;
           if (status === 'succeeded') {
             clearInterval(interval);
-            const videoUrl = res.data?.result?.videos?.[0]?.url;
+            const videoUrl = res.data?.content?.video_url;
             if (videoUrl) {
+              this.saveGenerationHistory('video', videoUrl);
               console.log('✅ 视频地址：', videoUrl);
               wx.navigateTo({
                 url: `/pages/videoPreview/videoPreview?videoUrl=${encodeURIComponent(videoUrl)}`
               });
-              this.saveGenerationHistory('video', videoUrl);
             } else {
               wx.showToast({ title: '未获取到视频地址', icon: 'none' });
             }
