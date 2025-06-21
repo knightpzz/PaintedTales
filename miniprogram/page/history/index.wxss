@@ -78,3 +78,21 @@
   color: #999;
   margin-top: 16rpx;
 }
+.history-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rpx;
+}
+
+.timestamp {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.delete-icon {
+  width: 75rpx;
+  height: 75rpx;
+  margin-left: 30rpx;
+  margin-top: 8rpx;
+}

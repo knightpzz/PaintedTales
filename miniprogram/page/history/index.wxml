@@ -22,11 +22,15 @@
         </view>
 
         <view wx:elif="{{item.type === 'video'}}">
-          <video src="{{item.videoUrl}}" controls class="video-player" initial-time="0" autoplay="false" loop="false" binderror="onVideoError"></video>
+          <video src="{{item.videoUrl}}" controls class="video-player" initial-time="0" autoplay="false" loop="false"></video>
         </view>
 
 
-        <text class="timestamp">生成时间：{{item.createdAt}}</text>
+        <view class="history-footer">
+          <text class="timestamp">生成时间：{{item.createdAt}}</text>
+          <image class="delete-icon" src="../../image/trash.png" data-id="{{item._id}}" bindtap="onDeleteConfirm" />
+        </view>
+
       </view>
     </block>
 

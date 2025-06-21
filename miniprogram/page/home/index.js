@@ -8,8 +8,8 @@ Page({
     prompt: '',
     // 新增：生成类型选择项
     typeOptions: ['生成图片', '生成视频'],
-    typeIndex: 0,  // 默认“生成图片”
-    generationType: 'image'  // 可选值：'image' | 'video'
+    typeIndex: 1,  // 默认“生成视频”
+    generationType: 'video'  // 可选值：'image' | 'video'
   },
 
 
@@ -171,7 +171,7 @@ Page({
     wx.showLoading({ title: '生成视频中...' });
 
     const promptText = this.data.descriptionList.join('\n');
-    const videoPrompt = `多个镜头。${promptText} --ration 16:9 --resolution 480p --duration 5 --framepersecond 16 --watermark false`;
+    const videoPrompt = `请以童话风格生成。多个镜头。${promptText} --ration 16:9 --resolution 480p --duration 10 --framepersecond 16 --watermark false`;
 
     wx.request({
       url: 'https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks',
@@ -249,7 +249,7 @@ Page({
   pollVideoResult(taskId) {
     const checkUrl = `https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks/${taskId}`;
     let retryCount = 0;
-    const maxRetries = 20; // 最多轮询20次，大约1分40秒
+    const maxRetries = 40; // 最多轮询40次，大约1分40秒
 
     const interval = setInterval(() => {
       if (retryCount >= maxRetries) {
