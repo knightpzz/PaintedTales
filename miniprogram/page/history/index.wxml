@@ -8,6 +8,7 @@
   
   <block wx:for="{{historyList}}" wx:key="id">
     <view class="history-item">
+    
       <text>关键词：{{item.inputText}}</text>
       <!-- <button bindtap="generateTestPDF">测试生成 PDF</button> -->
       <swiper class="swiper" indicator-dots circular autoplay>
@@ -19,6 +20,7 @@
       </swiper>
 
       <text class="timestamp">生成时间：{{item.createdAt}}</text>
+      <button bindtap="downloadPDF" data-item="{{item}}">下载 PDF</button>
     </view>
   </block>
 </view>
