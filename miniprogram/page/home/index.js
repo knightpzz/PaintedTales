@@ -83,10 +83,10 @@ Page({
     });
     wx.showLoading({ title: '生成中...', mask: true });
 
-    
+
   },
   // 内容生成流程
-  generateContentFlow(){
+  generateContentFlow() {
     const prompt = this.data.prompt;
     wx.request({
       url: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions',
@@ -124,7 +124,7 @@ Page({
           }
           this.setData({ descriptionList: paragraphs });
 
-        
+
           if (this.data.generationType === 'image') {
             this.generateIllustrationFlow(); // 自定义图片生成功能
           } else if (this.data.generationType === 'video') {
@@ -151,22 +151,6 @@ Page({
       wx.hideLoading();
       console.log('图片数组:', urls);
 
-      // ⭐ 保存历史记录到数据库
-      // const db = wx.cloud.database()
-      // db.collection('history').add({
-      //   data: {
-      //     inputText: this.data.userInput || '', // 可选输入关键词
-      //     images: urls,
-      //     createdAt: new Date()
-      //   },
-      //   success: res => {
-      //     console.log('✅ 历史记录已保存', res);
-      //   },
-      //   fail: err => {
-      //     console.error('❌ 保存失败 ❌', err);
-      //     wx.showToast({ title: '保存失败', icon: 'none' });
-      //   }
-      // })
       this.saveGenerationHistory('image', urls);
 
       this.setData({
@@ -185,10 +169,10 @@ Page({
   // 视频生成流程（占位逻辑）
   generateVideoFlow() {
     wx.showLoading({ title: '生成视频中...' });
-  
+
     const promptText = this.data.descriptionList.join('\n');
-    const videoPrompt = `多个镜头。${promptText} --ration 16:9 --resolution 480p --duration 1 --framepersecond 16 --watermark false`;
-  
+    const videoPrompt = `多个镜头。${promptText} --ration 16:9 --resolution 480p --duration 5 --framepersecond 16 --watermark false`;
+
     wx.request({
       url: 'https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks',
       method: 'POST',
@@ -209,10 +193,11 @@ Page({
       success: (res) => {
         wx.hideLoading();
         const taskId = res.data?.id;
+        console.log('视频生成返回原始数据:', res);
         if (taskId) {
           console.log('🎬 视频生成任务提交成功，任务ID:', taskId);
           wx.showToast({ title: '视频生成中，请稍后查看', icon: 'none' });
-  
+
           // ⭐ 可以把 taskId 存下来，稍后轮询获取视频地址
           this.pollVideoResult(taskId);
         } else {
@@ -227,7 +212,7 @@ Page({
       }
     });
   },
-  
+
 
   generateImage(promptText) {
     return new Promise((resolve, reject) => {
@@ -243,7 +228,7 @@ Page({
           model: 'doubao-seedream-3-0-t2i-250415',
           prompt: promptText,
           response_format: 'url',
-          size: '512x512',
+          size: '768x512',
           guidance_scale: 2.5,
           watermark: false
         },
@@ -262,9 +247,21 @@ Page({
     });
   },
   pollVideoResult(taskId) {
-    const checkUrl = `https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks/${taskId}`
-  
+    const checkUrl = `https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks/${taskId}`;
+    let retryCount = 0;
+    const maxRetries = 20; // 最多轮询20次，大约1分40秒
+
     const interval = setInterval(() => {
+      if (retryCount >= maxRetries) {
+        clearInterval(interval);
+        wx.hideLoading();
+        wx.showToast({ title: '超时未完成', icon: 'none' });
+        console.warn('轮询超时');
+        return;
+      }
+
+      retryCount++;
+
       wx.request({
         url: checkUrl,
         method: 'GET',
@@ -272,6 +269,8 @@ Page({
           'Authorization': 'Bearer cae5d8c2-cd63-463c-8986-f5cb3f1c3ece'
         },
         success: (res) => {
+          console.log(`第${retryCount}次轮询：`, res.data);
+
           const status = res.data?.status;
           if (status === 'succeeded') {
             clearInterval(interval);
@@ -281,7 +280,6 @@ Page({
               wx.navigateTo({
                 url: `/pages/videoPreview/videoPreview?videoUrl=${encodeURIComponent(videoUrl)}`
               });
-
               this.saveGenerationHistory('video', videoUrl);
             } else {
               wx.showToast({ title: '未获取到视频地址', icon: 'none' });
@@ -290,39 +288,30 @@ Page({
             clearInterval(interval);
             wx.showToast({ title: '视频生成失败', icon: 'none' });
           } else {
-            console.log('⏳ 视频生成中...');
+            console.log(`⏳ 视频状态：${status}`);
           }
         },
         fail: (err) => {
           clearInterval(interval);
-          console.error('视频结果查询失败：', err);
+          console.error('视频状态获取失败：', err);
+          wx.showToast({ title: '状态获取失败', icon: 'none' });
         }
       });
-    }, 5000); // 每5秒轮询一次
+    }, 5000);
   },
-  
-  onImageTap(e) {
-    const imageUrl = e.currentTarget.dataset.url;
-    wx.showActionSheet({
-      itemList: ['保存图片'],
-      success: (res) => {
-        if (res.tapIndex === 0) {
-          this.saveImage(imageUrl);
-        }
-      }
-    });
-  },
+
 
   saveGenerationHistory(type, data) {
     const db = wx.cloud.database();
-    const now = new Date();
-  
+    // 格式化日期为 'YYYY-MM-DD HH:MM:SS' 格式
+    const now = new Date().toLocaleString();
+
     const historyRecord = {
       inputText: this.data.userInput || '',
       createdAt: now,
       type // 'image' 或 'video'
     };
-  
+
     if (type === 'image') {
       historyRecord.images = data; // 传入的是图片URL数组
     } else if (type === 'video') {
@@ -331,7 +320,7 @@ Page({
       console.warn('⚠️ 未知的历史记录类型');
       return;
     }
-  
+
     db.collection('history').add({
       data: historyRecord,
       success: res => {
@@ -343,30 +332,6 @@ Page({
       }
     });
   },
-  
-  saveImage(url) {
-    const db = wx.cloud.database();
-    // 格式化日期为 'YYYY-MM-DD HH:MM:SS' 格式
-    const formattedDate = new Date().toLocaleString(); 
-    // 保存到数据库
-    db.collection('history').add({
-      data: {
-        inputText: this.data.userInput || '', // 你可以使用用户输入的数据
-        images: url,
-        createdAt: formattedDate  // 保存当前时间
-      },
-      success: res => {
-        console.log('保存成功', res);
-        this.setData({
-          imageList: [...this.data.imageList, url], // 更新本地的 imageList 数据
-          swiperKey: Date.now() // 更新 swiperKey 强制重新渲染
-        });
-      },
-      fail: err => {
-        console.error('保存失败', err);
-        wx.showToast({ title: '保存失败', icon: 'none' });
-      }
-    });
-  }
+
 
 });
