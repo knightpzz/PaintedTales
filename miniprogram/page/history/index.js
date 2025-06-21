@@ -1,7 +1,11 @@
+
 Page({
   data: {
     historyList: []
   },
+
+  
+
 
   onLoad() {
     const db = wx.cloud.database()
@@ -31,7 +35,8 @@ Page({
     wx.navigateBack({
     delta: 1
   })
-}
+},
+
 
 }
 

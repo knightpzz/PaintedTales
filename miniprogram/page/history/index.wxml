@@ -3,11 +3,13 @@
   <text class="nav-title">历史记录</text>
 </view>
 
+<scroll-view scroll-y="true" style="height: 100vh;">
 <view class="history-page">
+  
   <block wx:for="{{historyList}}" wx:key="id">
     <view class="history-item">
       <text>关键词：{{item.inputText}}</text>
-
+      <!-- <button bindtap="generateTestPDF">测试生成 PDF</button> -->
       <swiper class="swiper" indicator-dots circular autoplay>
         <block wx:for="{{item.images}}" wx:key="*this">
           <swiper-item>
@@ -20,3 +22,5 @@
     </view>
   </block>
 </view>
+<view class="bottom-gap" style="height: 100rpx;"></view>
+</scroll-view>
