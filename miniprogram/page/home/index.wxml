@@ -18,10 +18,13 @@
     <input class="input-box" type="text" placeholder="请输入不超过5个关键字，用空格隔开" bindinput="onInput" value="{{userInput}}" />
   </view>
 
-  <!-- 提交按钮 -->
-  <view class="button-section">
-    <button class="submit-btn" bindtap="submitToDoubao">提交</button>
-  </view>
+<!-- 类型选择与提交按钮在同一行 -->
+<view class="button-section-row">
+  <picker class="type-picker" mode="selector" value="{{typeIndex}}" range="{{typeOptions}}" bindchange="onTypeChange">
+    <view class="picker-text">当前模式：{{typeOptions[typeIndex]}}</view>
+  </picker>
+  <button class="submit-btn" bindtap="submitToDoubao">提交</button>
+</view>
 
   <!-- 豆包回复 -->
   <!-- <view class="result-section" wx:if="{{reply}}">

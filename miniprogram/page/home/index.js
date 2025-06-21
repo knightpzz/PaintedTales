@@ -4,15 +4,23 @@ Page({
     userInput: '',
     reply: '',
     descriptionList: [], // 五段插画描述，建议从豆包返回结果中解析
-    imageList: [] // 存放五张图地址
+    imageList: [], // 存放五张图地址
+    prompt: '',
+    // 新增：生成类型选择项
+    typeOptions: ['生成图片', '生成视频'],
+    typeIndex: 0,  // 默认“生成图片”
+    generationType: 'image'  // 可选值：'image' | 'video'
   },
 
-  
-  
 
-
-  
-
+  onTypeChange(e) {
+    const index = Number(e.detail.value);
+    const type = index === 0 ? 'image' : 'video';
+    this.setData({
+      typeIndex: index,
+      generationType: type
+    });
+  },
   goToHistory() {
     wx.navigateTo({
       url: '/page/history/index'
@@ -51,6 +59,7 @@ Page({
   submitToDoubao() {
     const rawInput = this.data.userInput.trim();
     const cleanedInput = this.sanitizeInput(rawInput);
+    const { generationType } = this.data;
 
     const keywords = cleanedInput
       .split(/[\s,，、]+/)
@@ -69,9 +78,16 @@ Page({
 
     const keywordStr = keywords.map(k => `“${k}”`).join('、');
     const prompt = `请以${keywordStr}为主题写一段童话故事，总共分为5个段落，总字数不超过300字。`;
-
+    this.setData({ prompt }, () => {
+      this.generateContentFlow();
+    });
     wx.showLoading({ title: '生成中...', mask: true });
 
+    
+  },
+  // 内容生成流程
+  generateContentFlow(){
+    const prompt = this.data.prompt;
     wx.request({
       url: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions',
       method: 'POST',
@@ -96,12 +112,6 @@ Page({
 
         if (typeof story === 'string' && story.trim()) {
           this.setData({ reply: story });
-
-          // 🔹 构造插画生成 Prompt
-          const cleanStory = story.replace(/###\s*/g, '');  // 可选：去掉“### 第一段”
-          const illustrationPrompt = `请以下面这五段童话为基础，每段童话生成一张插画，插画与文字内容相匹配，童话如下：\n${cleanStory}`;
-
-          // console.log('提交给插画生成的提示语：\n', illustrationPrompt);
           const paragraphs = story
             .split(/\n{2,}|\r\n\r\n/)
             .map(p => p.trim())
@@ -112,9 +122,15 @@ Page({
             wx.showToast({ title: '童话分段失败', icon: 'none' });
             return;
           }
-          this.setData({ descriptionList: paragraphs }, () => {
-            this.generateAllImages();
-          });
+          this.setData({ descriptionList: paragraphs });
+
+        
+          if (this.data.generationType === 'image') {
+            this.generateIllustrationFlow(); // 自定义图片生成功能
+          } else if (this.data.generationType === 'video') {
+            this.generateVideoFlow(); // 自定义视频生成功能
+          }
+
         } else {
           wx.showToast({ title: '生成失败', icon: 'none' });
         }
@@ -127,7 +143,8 @@ Page({
       }
     });
   },
-  generateAllImages() {
+  // 图片生成流程
+  generateIllustrationFlow() {
     wx.showLoading({ title: '生成插画中...' });
     const promises = this.data.descriptionList.map(desc => this.generateImage(desc));
     Promise.all(promises).then(urls => {
@@ -135,33 +152,82 @@ Page({
       console.log('图片数组:', urls);
 
       // ⭐ 保存历史记录到数据库
-      const db = wx.cloud.database()
-      db.collection('history').add({
-        data: {
-          inputText: this.data.userInput || '', // 可选输入关键词
-          images: urls,
-          createdAt: new Date()
-        },
-        success: res => {
-          console.log('✅ 历史记录已保存', res);
-        },
-        fail: err => {
-          console.error('❌ 保存失败 ❌', err);
-          wx.showToast({ title: '保存失败', icon: 'none' });
-        }
-      })
+      // const db = wx.cloud.database()
+      // db.collection('history').add({
+      //   data: {
+      //     inputText: this.data.userInput || '', // 可选输入关键词
+      //     images: urls,
+      //     createdAt: new Date()
+      //   },
+      //   success: res => {
+      //     console.log('✅ 历史记录已保存', res);
+      //   },
+      //   fail: err => {
+      //     console.error('❌ 保存失败 ❌', err);
+      //     wx.showToast({ title: '保存失败', icon: 'none' });
+      //   }
+      // })
+      this.saveGenerationHistory('image', urls);
+
       this.setData({
         imageList: urls,
         swiperKey: Date.now() // 添加动态 key 强制重新渲染
         // swiperKey: Date.now() 
       });
 
-      
+
     }).catch(err => {
       wx.hideLoading();
       wx.showToast({ title: '部分图片生成失败', icon: 'none' });
     });
   },
+
+  // 视频生成流程（占位逻辑）
+  generateVideoFlow() {
+    wx.showLoading({ title: '生成视频中...' });
+  
+    const promptText = this.data.descriptionList.join('\n');
+    const videoPrompt = `多个镜头。${promptText} --ration 16:9 --resolution 480p --duration 1 --framepersecond 16 --watermark false`;
+  
+    wx.request({
+      url: 'https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks',
+      method: 'POST',
+      timeout: 30000,
+      header: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer cae5d8c2-cd63-463c-8986-f5cb3f1c3ece'
+      },
+      data: {
+        model: 'doubao-seedance-1-0-pro-250528',
+        content: [
+          {
+            type: 'text',
+            text: videoPrompt
+          }
+        ]
+      },
+      success: (res) => {
+        wx.hideLoading();
+        const taskId = res.data?.id;
+        if (taskId) {
+          console.log('🎬 视频生成任务提交成功，任务ID:', taskId);
+          wx.showToast({ title: '视频生成中，请稍后查看', icon: 'none' });
+  
+          // ⭐ 可以把 taskId 存下来，稍后轮询获取视频地址
+          this.pollVideoResult(taskId);
+        } else {
+          wx.showToast({ title: '任务提交失败', icon: 'none' });
+        }
+      },
+      fail: (err) => {
+        console.log('视频生成返回数据：', err.data);
+        wx.hideLoading();
+        console.error('视频生成请求失败：', err);
+        wx.showToast({ title: '视频生成失败', icon: 'none' });
+      }
+    });
+  },
+  
 
   generateImage(promptText) {
     return new Promise((resolve, reject) => {
@@ -179,12 +245,12 @@ Page({
           response_format: 'url',
           size: '512x512',
           guidance_scale: 2.5,
-          watermark: true
+          watermark: false
         },
         success: (res) => {
           console.log('请求成功，返回数据：', res);
 
-          
+
           const url = res.data?.data?.[0]?.url;
           url ? resolve(url) : reject('无效URL');
         },
@@ -195,7 +261,46 @@ Page({
       });
     });
   },
+  pollVideoResult(taskId) {
+    const checkUrl = `https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks/${taskId}`
+  
+    const interval = setInterval(() => {
+      wx.request({
+        url: checkUrl,
+        method: 'GET',
+        header: {
+          'Authorization': 'Bearer cae5d8c2-cd63-463c-8986-f5cb3f1c3ece'
+        },
+        success: (res) => {
+          const status = res.data?.status;
+          if (status === 'succeeded') {
+            clearInterval(interval);
+            const videoUrl = res.data?.result?.videos?.[0]?.url;
+            if (videoUrl) {
+              console.log('✅ 视频地址：', videoUrl);
+              wx.navigateTo({
+                url: `/pages/videoPreview/videoPreview?videoUrl=${encodeURIComponent(videoUrl)}`
+              });
 
+              this.saveGenerationHistory('video', videoUrl);
+            } else {
+              wx.showToast({ title: '未获取到视频地址', icon: 'none' });
+            }
+          } else if (status === 'failed') {
+            clearInterval(interval);
+            wx.showToast({ title: '视频生成失败', icon: 'none' });
+          } else {
+            console.log('⏳ 视频生成中...');
+          }
+        },
+        fail: (err) => {
+          clearInterval(interval);
+          console.error('视频结果查询失败：', err);
+        }
+      });
+    }, 5000); // 每5秒轮询一次
+  },
+  
   onImageTap(e) {
     const imageUrl = e.currentTarget.dataset.url;
     wx.showActionSheet({
@@ -208,6 +313,37 @@ Page({
     });
   },
 
+  saveGenerationHistory(type, data) {
+    const db = wx.cloud.database();
+    const now = new Date();
+  
+    const historyRecord = {
+      inputText: this.data.userInput || '',
+      createdAt: now,
+      type // 'image' 或 'video'
+    };
+  
+    if (type === 'image') {
+      historyRecord.images = data; // 传入的是图片URL数组
+    } else if (type === 'video') {
+      historyRecord.videoUrl = data; // 传入的是视频URL字符串
+    } else {
+      console.warn('⚠️ 未知的历史记录类型');
+      return;
+    }
+  
+    db.collection('history').add({
+      data: historyRecord,
+      success: res => {
+        console.log('✅ 历史记录已保存', res);
+      },
+      fail: err => {
+        console.error('❌ 保存历史记录失败 ❌', err);
+        wx.showToast({ title: '历史记录保存失败', icon: 'none' });
+      }
+    });
+  },
+  
   saveImage(url) {
     const db = wx.cloud.database();
     // 格式化日期为 'YYYY-MM-DD HH:MM:SS' 格式
@@ -232,5 +368,5 @@ Page({
       }
     });
   }
-  
+
 });

@@ -219,3 +219,32 @@ swiper-item {
   margin-right: 8rpx;
 }
 
+.button-section-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx;
+}
+
+.type-picker {
+  flex: 1;
+  margin-right: 16rpx;
+  font-size: 28rpx;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 12rpx;
+  padding: 8rpx 16rpx;
+  background-color: #f9f9f9;
+}
+
+.submit-btn {
+  flex: 1;
+  font-size: 30rpx;
+  padding: 16rpx;
+  background-color: #007aff;
+  color: white;
+  border-radius: 12rpx;
+}
+
+
