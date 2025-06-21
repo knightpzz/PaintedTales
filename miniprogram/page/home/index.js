@@ -210,12 +210,14 @@ Page({
 
   saveImage(url) {
     const db = wx.cloud.database();
+    // 格式化日期为 'YYYY-MM-DD HH:MM:SS' 格式
+    const formattedDate = new Date().toLocaleString(); 
     // 保存到数据库
     db.collection('history').add({
       data: {
         inputText: this.data.userInput || '', // 你可以使用用户输入的数据
         images: url,
-        createdAt: new Date()  // 保存当前时间
+        createdAt: formattedDate  // 保存当前时间
       },
       success: res => {
         console.log('保存成功', res);
