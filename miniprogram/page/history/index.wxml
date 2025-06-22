@@ -51,6 +51,9 @@
 
         <view class="history-footer">
           <text class="timestamp">生成时间：{{item.createdAt}}</text>
+          <!-- 收藏按钮 -->
+          <image class="favor-btn" src="../../image/{{item.isFavor ? 'favor-filled' : 'favor'}}.png" data-id="{{item._id}}" bindtap="onToggleFavor" />
+
           <image class="delete-icon" src="../../image/trash.png" data-id="{{item._id}}" bindtap="onDeleteConfirm" />
         </view>
 

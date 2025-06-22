@@ -38,7 +38,45 @@ Page({
   },
   
   
+  onToggleFavor(e) {
+    const id = e.currentTarget.dataset.id;
+    const db = wx.cloud.database();
+    const list = this.data.historyList;
+    const index = list.findIndex(item => item._id === id);
+    if (index === -1) return;
   
+    const currentFavor = list[index].isFavor;
+    const newFavor = !currentFavor;
+  
+    wx.showLoading({ title: newFavor ? '收藏中...' : '取消收藏中...' });
+  
+    db.collection('history').doc(id).update({
+      data: { isFavor: newFavor }
+    }).then(() => {
+      wx.hideLoading();
+      wx.showToast({ title: newFavor ? '已收藏' : '取消收藏', icon: 'success' });
+  
+      // ✅ 本地状态更新
+      list[index].isFavor = newFavor;
+  
+      // ✅ 重新排序
+      const sortedList = [...list].sort((a, b) => {
+        if (a.isFavor === b.isFavor) {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        }
+        return b.isFavor - a.isFavor;
+      });
+  
+      // ✅ 更新数据触发 UI 渲染
+      this.setData({ historyList: sortedList });
+    }).catch(err => {
+      wx.hideLoading();
+      console.error('收藏切换失败', err);
+      wx.showToast({ title: '操作失败', icon: 'none' });
+    });
+  },
+  
+
   onDeleteConfirm(e) {
     const recordId = e.currentTarget.dataset.id;
     const that = this;
