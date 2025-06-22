@@ -114,12 +114,12 @@ Page({
           this.setData({ reply: story });
           const paragraphs = story
             .split(/\n{2,}|\r\n\r\n/)
-            .map(p =>
-              p.trim().replace(
-                /^(#{1,6}|\-+|—+|[（(]?\d+[）)]?|[①②③④⑤⑥⑦⑧⑨⑩]|第[一二三四五六七八九十百千万]+[章段回节部]?)\s*/u,
-                ''
-              )
-            )
+            // .map(p =>
+            //   p.trim().replace(
+            //     /^(#{1,6}|\-+|—+|[（(]?\d+[）)]?|[①②③④⑤⑥⑦⑧⑨⑩]|第[一二三四五六七八九十百千万]+[章段回节部]?)\s*/u,
+            //     ''
+            //   )
+            // )
             .filter(p => p.length > 10)
             .slice(0, 5);
 
