@@ -277,9 +277,10 @@ Page({
         },
         success: (res) => {
           console.log(`第${retryCount}次轮询：`, res.data);
-
+          wx.showToast({ title: '视频正在努力生成中，请耐心等待', icon: 'none' });
           const status = res.data?.status;
           if (status === 'succeeded') {
+            wx.showToast({ title: '视频生成成功', icon: 'none' });
             clearInterval(interval);
             const videoUrl = res.data?.content?.video_url;
             if (videoUrl) {
@@ -317,6 +318,7 @@ Page({
       inputText: this.data.userInput || '',
       description: this.data.descriptionList || '',
       createdAt: now,
+      isFavor: false,
       type // 'image' 或 'video'
     };
 
