@@ -11,11 +11,11 @@ Page({
     typeIndex: 1,  // 默认“生成视频”
     generationType: 'video',  // 可选值：'image' | 'video'
     avatars: [
-      { name: '头像1', src: '../../image/maodie.png' },
-      { name: '头像2', src: '../../image/maodie.png' },
-      { name: '头像3', src: '../../image/maodie.png' },
-      { name: '头像4', src: '../../image/maodie.png' },
-      { name: '头像5', src: '../../image/maodie.png' }
+      { name: '头像1', src: '../../image/maodie1.jpg' },
+      { name: '头像2', src: '../../image/maodie2.png' },
+      { name: '头像3', src: '../../image/maodie3.png' },
+      { name: '头像4', src: '../../image/maodie4.png' },
+      { name: '头像5', src: '../../image/maodie5.png' }
 
     ],
     currentAvatar: '../../image/maodie.png',  // 默认头像路径
