@@ -114,9 +114,16 @@ Page({
           this.setData({ reply: story });
           const paragraphs = story
             .split(/\n{2,}|\r\n\r\n/)
-            .map(p => p.trim())
+            .map(p =>
+              p.trim().replace(
+                /^(#{1,6}|\-+|—+|[（(]?\d+[）)]?|[①②③④⑤⑥⑦⑧⑨⑩]|第[一二三四五六七八九十百千万]+[章段回节部]?)\s*/u,
+                ''
+              )
+            )
             .filter(p => p.length > 10)
-            .slice(0, 5); // 最多5段
+            .slice(0, 5);
+
+
 
           if (paragraphs.length === 0) {
             wx.showToast({ title: '童话分段失败', icon: 'none' });
@@ -308,6 +315,7 @@ Page({
 
     const historyRecord = {
       inputText: this.data.userInput || '',
+      description: this.data.descriptionList || '',
       createdAt: now,
       type // 'image' 或 'video'
     };

@@ -11,13 +11,33 @@ Page({
       .orderBy('createdAt', 'desc')
       .get()
       .then(({ data }) => {
-        console.log('📦 获取历史记录成功', data);
-        this.setData({ historyList: data });
+        const list = data.map(item => {
+          // 取前两段描述，防止预览过长
+          const previewSegments = (item.description || []).slice(0, 2);
+          // 用中文分号连接
+          let previewText = previewSegments.join('；');
+          // 替换换行符为空格，防止显示中断
+          previewText = previewText.replace(/[\r\n]+/g, ' ');
+          // 根据长度决定是否截断
+          const maxLength = 50;
+          const descriptionPreview = previewText.length > maxLength
+            ? previewText.slice(0, maxLength) + '...'
+            : previewText;
+  
+          return {
+            ...item,
+            showFullDescription: false,
+            descriptionPreview
+          };
+        });
+        this.setData({ historyList: list });
       })
       .catch(err => {
         console.error('❌ 获取失败', err);
       });
   },
+  
+  
   
   onDeleteConfirm(e) {
     const recordId = e.currentTarget.dataset.id;
@@ -46,6 +66,12 @@ Page({
         }
       }
     });
+  },
+  toggleDescription(e) {
+    const index = e.currentTarget.dataset.index;
+    const list = this.data.historyList;
+    list[index].showFullDescription = !list[index].showFullDescription;
+    this.setData({ historyList: list });
   },
   
 

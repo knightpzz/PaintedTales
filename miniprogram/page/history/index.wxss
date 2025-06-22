@@ -96,3 +96,33 @@
   margin-left: 30rpx;
   margin-top: 8rpx;
 }
+.description-block {
+  margin-top: 10rpx;
+  margin-bottom: 10rpx;
+  padding-left: 10rpx;
+}
+
+.desc-text {
+  font-size: 24rpx;
+  color: #555;
+  line-height: 36rpx;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* 限制2行 */
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+}
+
+.desc-line {
+  font-size: 24rpx;
+  color: #444;
+  display: block;
+  line-height: 36rpx;
+}
+
+.toggle-btn {
+  color: #1c8adb;
+  font-size: 24rpx;
+  margin-top: 6rpx;
+  display: inline-block;
+}

@@ -10,6 +10,26 @@
       <view class="history-item">
         <text>关键词：{{item.inputText}}</text>
 
+        <!-- ✅ 新增描述信息显示 -->
+        <view class="description-block">
+          <text class="desc-text" wx:if="{{!item.showFullDescription}}">
+            {{item.descriptionPreview}}
+          </text>
+
+          <view wx:elif="{{item.showFullDescription}}">
+            <block wx:for="{{item.description}}" wx:key="*this">
+              <text class="desc-line">· {{item}}</text>
+            </block>
+          </view>
+
+          <text class="toggle-btn" data-index="{{index}}" bindtap="toggleDescription">
+            {{item.showFullDescription ? '收起' : '展开'}}
+          </text>
+        </view>
+
+
+
+
         <!-- 判断记录类型：图片或视频 -->
         <view wx:if="{{item.type === 'image'}}">
           <swiper class="swiper" indicator-dots circular autoplay>
