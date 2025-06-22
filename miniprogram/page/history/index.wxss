@@ -122,7 +122,6 @@
   display: inline-block;
 }
 
-<<<<<<< Updated upstream
 .download-btn {
   margin-top: 10px;
   background-color: #007AFF;
@@ -130,7 +129,7 @@
   padding: 10px;
   border-radius: 5px;
   font-size: 16px;
-=======
+}
 .favor-btn {
   width: 40rpx;
   height: 40rpx;
@@ -143,5 +142,4 @@
   height: 40rpx;
   margin-left: 0rpx;
   margin-top: 12rpx;
->>>>>>> Stashed changes
 }
