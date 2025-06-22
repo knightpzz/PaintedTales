@@ -36,9 +36,12 @@
             <block wx:for="{{item.images}}" wx:key="*this">
               <swiper-item>
                 <image src="{{item}}" mode="aspectFill" class="image" />
+                 
               </swiper-item>
             </block>
           </swiper>
+          <!-- 批量下载图片-->
+          <button bindtap="downloadAllImages"  data-item="{{item}}" class="download-btn">批量下载图片</button>
         </view>
 
         <view wx:elif="{{item.type === 'video'}}">

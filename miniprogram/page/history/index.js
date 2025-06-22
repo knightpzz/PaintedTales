@@ -81,5 +81,71 @@ Page({
     })
   },
 
+  downloadAllImages: function (e) {
+    const item = e.currentTarget.dataset.item;  // 获取传递过来的 item 对象
+    console.log(item);  // 打印 item 以调试数据是否正确传递
+  
+    // 增加空值检查
+    if (!item || !item.images || item.images.length === 0) {
+      wx.showToast({
+        title: '没有图片数据可下载',
+        icon: 'error'
+      });
+      return;  // 如果没有图片数据，则退出
+    }
+  
+    const images = item.images;  // 获取 item.images 数组
+    const totalImages = images.length;  // 获取图片的总数
+    let downloadPromises = [];  // 用来存储每个图片下载的 Promise
+  
+    images.forEach((imageUrl) => {
+      // 创建一个 Promise 来下载每张图片
+      const downloadPromise = new Promise((resolve, reject) => {
+        wx.downloadFile({
+          url: imageUrl,  // 图片的 URL
+          success: (res) => {
+            if (res.statusCode === 200) {
+              // 下载成功，保存到相册
+              wx.saveImageToPhotosAlbum({
+                filePath: res.tempFilePath,
+                success: () => {
+                  resolve();  // 下载和保存成功后，调用 resolve
+                },
+                fail: () => {
+                  reject('保存图片失败');  // 如果保存失败，调用 reject
+                }
+              });
+            } else {
+              reject('下载图片失败');  // 如果下载失败，调用 reject
+            }
+          },
+          fail: () => {
+            reject('下载图片失败');  // 如果下载失败，调用 reject
+          }
+        });
+      });
+  
+      // 将每个 Promise 添加到数组中
+      downloadPromises.push(downloadPromise);
+    });
+  
+    // 使用 Promise.all 来等待所有图片的下载和保存完成
+    Promise.all(downloadPromises)
+      .then(() => {
+        // 当所有图片下载并保存完毕后，显示提示
+        wx.showToast({
+          title: '所有图片已保存到相册！',
+          icon: 'success'
+        });
+      })
+      .catch((error) => {
+        // 如果有任何一个下载或保存失败，显示错误提示
+        wx.showToast({
+          title: error || '图片下载失败',
+          icon: 'error'
+        });
+      });
+  }
+  
 
 })
