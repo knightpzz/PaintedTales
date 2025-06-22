@@ -160,8 +160,7 @@
   font-size: 28rpx;
 }
 
-.search-btn,
-.clear-btn {
+.search-btn {
   margin-left: 20rpx;
   padding: 0 20rpx;
   font-size: 28rpx;

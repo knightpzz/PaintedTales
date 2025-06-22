@@ -10,17 +10,19 @@ Page({
 
   onLoad() {
     wx.cloud.database().collection('history')
-      .orderBy('createdAt', 'desc')
       .get()
       .then(({ data }) => {
-        const list = data.map(item => {
-          // 取前两段描述，防止预览过长
+        // 前端排序：先按 isFavor 降序，再按 createdAt 降序
+        const sorted = [...data].sort((a, b) => {
+          if ((a.isFavor ? 1 : 0) === (b.isFavor ? 1 : 0)) {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          }
+          return (b.isFavor ? 1 : 0) - (a.isFavor ? 1 : 0);
+        });
+
+        const list = sorted.map(item => {
           const previewSegments = (item.description || []).slice(0, 2);
-          // 用中文分号连接
-          let previewText = previewSegments.join('；');
-          // 替换换行符为空格，防止显示中断
-          previewText = previewText.replace(/[\r\n]+/g, ' ');
-          // 根据长度决定是否截断
+          let previewText = previewSegments.join('；').replace(/[\r\n]+/g, ' ');
           const maxLength = 50;
           const descriptionPreview = previewText.length > maxLength
             ? previewText.slice(0, maxLength) + '...'
@@ -32,7 +34,7 @@ Page({
             descriptionPreview
           };
         });
-        // 全部和当前显示列表初始化
+
         this.setData({
           historyList: list,
           allHistoryList: list
@@ -42,10 +44,11 @@ Page({
         console.error('❌ 获取失败', err);
       });
   },
+  
   onSearchInput(e) {
     const keyword = e.detail.value;
     this.setData({ searchKeyword: keyword });
-  
+
     // 若输入被清空，自动还原历史列表
     if (!keyword.trim()) {
       this.setData({
@@ -53,8 +56,8 @@ Page({
       });
     }
   },
-  
-  
+
+
 
   onSearchConfirm() {
     const keyword = this.data.searchKeyword.trim().toLowerCase();
@@ -64,17 +67,17 @@ Page({
       });
       return;
     }
-  
+
     const filteredList = this.data.allHistoryList.filter(item => {
       const inputMatch = item.inputText && item.inputText.toLowerCase().includes(keyword);
       const descMatch = (item.description || []).some(desc => desc.toLowerCase().includes(keyword));
       return inputMatch || descMatch;
     });
-  
+
     this.setData({ historyList: filteredList });
   },
-  
-  
+
+
 
   onClearSearch() {
     this.setData({
@@ -82,8 +85,8 @@ Page({
       historyList: this.data.allHistoryList
     });
   },
-  
-  
+
+
   onToggleFavor(e) {
     const id = e.currentTarget.dataset.id;
     const db = wx.cloud.database();
@@ -197,17 +200,17 @@ Page({
                   resolve();  // 下载和保存成功后，调用 resolve
                 },
                 fail: () => {
-                  console.error("保存图片失败:", error);  
+                  console.error("保存图片失败:", error);
                   reject('保存图片失败');  // 如果保存失败，调用 reject
                 }
               });
             } else {
-              console.error("下载图片失败, 状态码:", res.statusCode);  
+              console.error("下载图片失败, 状态码:", res.statusCode);
               reject('下载图片失败1');  // 如果下载失败，调用 reject
             }
           },
           fail: () => {
-            console.error("下载图片失败:", error); 
+            console.error("下载图片失败:", error);
             reject('下载图片失败2');  // 如果下载失败，调用 reject
           }
         });
@@ -238,7 +241,7 @@ Page({
   downloadVideo: function (e) {
     const videoUrl = e.currentTarget.dataset.url;  // 获取传递的 video URL
     console.log(videoUrl);  // 打印视频 URL 以进行调试
-  
+
     if (!videoUrl) {
       wx.showToast({
         title: '视频链接无效',
@@ -246,7 +249,7 @@ Page({
       });
       return;
     }
-  
+
     // 下载视频文件
     wx.downloadFile({
       url: videoUrl,  // 视频的 URL
@@ -254,7 +257,7 @@ Page({
         if (res.statusCode === 200) {
           // 下载成功，获取临时文件路径
           let tempFilePath = res.tempFilePath;
-  
+
           // 尝试保存视频到相册
           wx.saveVideoToPhotosAlbum({
             filePath: tempFilePath,  // 临时文件路径
