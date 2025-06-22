@@ -1,6 +1,8 @@
 Page({
   data: {
-    historyList: []
+    historyList: [],
+    allHistoryList: [], // 保留全部数据
+    searchKeyword: ''
   },
 
 
@@ -23,18 +25,62 @@ Page({
           const descriptionPreview = previewText.length > maxLength
             ? previewText.slice(0, maxLength) + '...'
             : previewText;
-  
+
           return {
             ...item,
             showFullDescription: false,
             descriptionPreview
           };
         });
-        this.setData({ historyList: list });
+        // 全部和当前显示列表初始化
+        this.setData({
+          historyList: list,
+          allHistoryList: list
+        });
       })
       .catch(err => {
         console.error('❌ 获取失败', err);
       });
+  },
+  onSearchInput(e) {
+    const keyword = e.detail.value;
+    this.setData({ searchKeyword: keyword });
+  
+    // 若输入被清空，自动还原历史列表
+    if (!keyword.trim()) {
+      this.setData({
+        historyList: this.data.allHistoryList
+      });
+    }
+  },
+  
+  
+
+  onSearchConfirm() {
+    const keyword = this.data.searchKeyword.trim().toLowerCase();
+    if (!keyword) {
+      this.setData({
+        historyList: this.data.allHistoryList
+      });
+      return;
+    }
+  
+    const filteredList = this.data.allHistoryList.filter(item => {
+      const inputMatch = item.inputText && item.inputText.toLowerCase().includes(keyword);
+      const descMatch = (item.description || []).some(desc => desc.toLowerCase().includes(keyword));
+      return inputMatch || descMatch;
+    });
+  
+    this.setData({ historyList: filteredList });
+  },
+  
+  
+
+  onClearSearch() {
+    this.setData({
+      searchKeyword: '',
+      historyList: this.data.allHistoryList
+    });
   },
   
   
@@ -44,21 +90,21 @@ Page({
     const list = this.data.historyList;
     const index = list.findIndex(item => item._id === id);
     if (index === -1) return;
-  
+
     const currentFavor = list[index].isFavor;
     const newFavor = !currentFavor;
-  
+
     wx.showLoading({ title: newFavor ? '收藏中...' : '取消收藏中...' });
-  
+
     db.collection('history').doc(id).update({
       data: { isFavor: newFavor }
     }).then(() => {
       wx.hideLoading();
       wx.showToast({ title: newFavor ? '已收藏' : '取消收藏', icon: 'success' });
-  
+
       // ✅ 本地状态更新
       list[index].isFavor = newFavor;
-  
+
       // ✅ 重新排序
       const sortedList = [...list].sort((a, b) => {
         if (a.isFavor === b.isFavor) {
@@ -66,7 +112,7 @@ Page({
         }
         return b.isFavor - a.isFavor;
       });
-  
+
       // ✅ 更新数据触发 UI 渲染
       this.setData({ historyList: sortedList });
     }).catch(err => {
@@ -75,13 +121,13 @@ Page({
       wx.showToast({ title: '操作失败', icon: 'none' });
     });
   },
-  
-  
+
+
 
   onDeleteConfirm(e) {
     const recordId = e.currentTarget.dataset.id;
     const that = this;
-  
+
     wx.showModal({
       title: '确认删除？',
       content: '删除后不可恢复，是否继续？',
@@ -112,7 +158,7 @@ Page({
     list[index].showFullDescription = !list[index].showFullDescription;
     this.setData({ historyList: list });
   },
-  
+
 
   goBack() {
     wx.navigateBack({
@@ -123,7 +169,7 @@ Page({
   downloadAllImages: function (e) {
     const item = e.currentTarget.dataset.item;  // 获取传递过来的 item 对象
     console.log(item);  // 打印 item 以调试数据是否正确传递
-  
+
     // 增加空值检查
     if (!item || !item.images || item.images.length === 0) {
       wx.showToast({
@@ -132,11 +178,11 @@ Page({
       });
       return;  // 如果没有图片数据，则退出
     }
-  
+
     const images = item.images;  // 获取 item.images 数组
     const totalImages = images.length;  // 获取图片的总数
     let downloadPromises = [];  // 用来存储每个图片下载的 Promise
-  
+
     images.forEach((imageUrl) => {
       // 创建一个 Promise 来下载每张图片
       const downloadPromise = new Promise((resolve, reject) => {
@@ -166,11 +212,11 @@ Page({
           }
         });
       });
-  
+
       // 将每个 Promise 添加到数组中
       downloadPromises.push(downloadPromise);
     });
-  
+
     // 使用 Promise.all 来等待所有图片的下载和保存完成
     Promise.all(downloadPromises)
       .then(() => {
@@ -237,13 +283,5 @@ Page({
       }
     });
   }
-  
-  
-  
-  
-  
-
- 
-  
 
 })

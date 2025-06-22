@@ -143,3 +143,31 @@
   margin-left: 0rpx;
   margin-top: 12rpx;
 }
+
+.search-bar {
+  display: flex;
+  padding: 20rpx;
+  background-color: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.search-input {
+  flex: 1;
+  height: 64rpx;
+  padding: 0 20rpx;
+  border: 1px solid #ddd;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+}
+
+.search-btn,
+.clear-btn {
+  margin-left: 20rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  border-radius: 8rpx;
+  background-color: #409EFF;
+  color: white;
+}
