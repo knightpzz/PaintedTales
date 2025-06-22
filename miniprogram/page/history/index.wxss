@@ -131,15 +131,15 @@
   font-size: 16px;
 }
 .favor-btn {
-  width: 40rpx;
-  height: 40rpx;
+  width: 55rpx;
+  height: 45rpx;
   margin-right: -200rpx;
-  margin-top: 11rpx;
+  margin-top: 10rpx;
 }
 
 .delete-icon {
-  width: 40rpx;
-  height: 40rpx;
+  width: 45rpx;
+  height: 45rpx;
   margin-left: 0rpx;
   margin-top: 12rpx;
 }

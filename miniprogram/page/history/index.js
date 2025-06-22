@@ -76,6 +76,7 @@ Page({
     });
   },
   
+  
 
   onDeleteConfirm(e) {
     const recordId = e.currentTarget.dataset.id;
