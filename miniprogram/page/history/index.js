@@ -151,15 +151,18 @@ Page({
                   resolve();  // 下载和保存成功后，调用 resolve
                 },
                 fail: () => {
+                  console.error("保存图片失败:", error);  
                   reject('保存图片失败');  // 如果保存失败，调用 reject
                 }
               });
             } else {
-              reject('下载图片失败');  // 如果下载失败，调用 reject
+              console.error("下载图片失败, 状态码:", res.statusCode);  
+              reject('下载图片失败1');  // 如果下载失败，调用 reject
             }
           },
           fail: () => {
-            reject('下载图片失败');  // 如果下载失败，调用 reject
+            console.error("下载图片失败:", error); 
+            reject('下载图片失败2');  // 如果下载失败，调用 reject
           }
         });
       });
@@ -184,7 +187,63 @@ Page({
           icon: 'error'
         });
       });
+  },
+
+  downloadVideo: function (e) {
+    const videoUrl = e.currentTarget.dataset.url;  // 获取传递的 video URL
+    console.log(videoUrl);  // 打印视频 URL 以进行调试
+  
+    if (!videoUrl) {
+      wx.showToast({
+        title: '视频链接无效',
+        icon: 'error'
+      });
+      return;
+    }
+  
+    // 下载视频文件
+    wx.downloadFile({
+      url: videoUrl,  // 视频的 URL
+      success: (res) => {
+        if (res.statusCode === 200) {
+          // 下载成功，获取临时文件路径
+          let tempFilePath = res.tempFilePath;
+  
+          // 尝试保存视频到相册
+          wx.saveVideoToPhotosAlbum({
+            filePath: tempFilePath,  // 临时文件路径
+            success: function () {
+              wx.showToast({
+                title: '视频已保存到相册',
+                icon: 'success'
+              });
+            },
+            fail: function (error) {
+              console.error('保存视频失败:', error);  // 打印错误信息
+              wx.showToast({
+                title: '保存失败',
+                icon: 'error'
+              });
+            }
+          });
+        }
+      },
+      fail: (error) => {
+        console.error('下载视频失败:', error);  // 打印下载错误信息
+        wx.showToast({
+          title: '下载失败',
+          icon: 'error'
+        });
+      }
+    });
   }
+  
+  
+  
+  
+  
+
+ 
   
 
 })
