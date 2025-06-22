@@ -41,11 +41,13 @@
             </block>
           </swiper>
           <!-- 批量下载图片-->
-          <button bindtap="downloadAllImages" data-item="{{item}}" class="download-btn">批量下载图片</button>
+          <button bindtap="downloadAllImages" data-item="{{item}}" class="download-btn">下载图片</button>
         </view>
 
         <view wx:elif="{{item.type === 'video'}}">
           <video src="{{item.videoUrl}}" controls class="video-player" initial-time="0" autoplay="false" loop="false"></video>
+          <!-- 添加下载视频按钮 -->
+           <button bindtap="downloadVideo" data-url="{{item.videoUrl}}" class="download-btn">下载视频</button>
         </view>
 
 
