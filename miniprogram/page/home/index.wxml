@@ -3,10 +3,14 @@
 
 <!-- 用户信息：放到页面右上角 -->
 <view class="user-info">
-  <image wx:if="{{userInfo.avatarUrl}}" src="../../image/maodie.png" class="avatar"></image>
-  <image wx:else src="../../image/maodie.png" class="avatar"></image>
+   <!-- 如果用户有头像，则显示该头像 -->
+    <image src="{{currentAvatar}}" class="avatar" bindtap="changeAvatar"></image>
   <text class="username">{{userInfo.nickName}}</text>
 </view>
+
+
+
+
 
 <view class="history-btn" style="top: {{navTop}}rpx;" bindtap="goToHistory">
   <image src="../../image/play.png" class="history-icon"></image>
@@ -51,4 +55,24 @@
   </view>
 
 
+</view>
+
+<!-- 自定义弹窗 -->
+<view wx:if="{{showModal}}" class="modal">
+  <view class="modal-content">
+    <view class="modal-header">
+      <text>选择头像</text>
+      <button bindtap="closeModal">关闭</button>
+    </view>
+    <view class="avatar-list">
+      <block wx:for="{{avatars}}" wx:key="index">
+        <image 
+          src="{{item.src}}" 
+          class="avatar-item" 
+          bindtap="selectAvatar"
+          data-src="{{item.src}}"  
+        ></image>
+      </block>
+    </view>
+  </view>
 </view>
