@@ -46,6 +46,9 @@ Page({
     wx.cloud.init({
       env: 'cloud1-8gmijxcx249b2dbf'  // 请使用正确的环境ID
     });
+
+    const systemInfo = wx.getSystemInfoSync();
+  console.log('页面宽高：', systemInfo.windowWidth, systemInfo.windowHeight);
     
     const userInfo = getApp().globalData.userInfo || {};  // 获取全局数据中的用户信息
     this.setData({  

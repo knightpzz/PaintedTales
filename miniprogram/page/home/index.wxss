@@ -4,12 +4,16 @@
   left: 20rpx;
   display: flex;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.95); /* 稍微亮一点 */
+
+  background-color: rgba(255, 255, 255, 0.2); /* 更加透明的白色背景 */
   padding: 16rpx 24rpx;
   border-radius: 24rpx;
   z-index: 999;
-  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.1); /* 可选：添加阴影更立体 */
+  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px); /* 背景模糊加强一点 */
 }
+
+
 
 .avatar {
   width: 100rpx;   /* 原来是 80rpx */
@@ -30,7 +34,6 @@
 .container {
   height: 100vh;
   padding: 20rpx 30rpx;
-  background-color: #f5f5f7;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -42,6 +45,7 @@
 
 /* 输入区横排 */
 .input-section {
+
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -49,7 +53,14 @@
   width: 100%;
   max-width: 640rpx;
   margin-bottom: 30rpx;
+
+  background-color: rgba(255, 255, 255, 0.4); /* 更透明 */
+  border-radius: 24rpx;
+  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
+  padding: 16rpx;
 }
+
+
 
 /* 输入框占满剩余空间 */
 .input-box {
@@ -61,6 +72,7 @@
   border-radius: 8rpx;
   background-color: #fff;
 }
+
 
 /* 提交按钮 */
 .submit-btn {
@@ -202,12 +214,15 @@ swiper-item {
 
 .history-btn {
   position: fixed;
-  top: 120rpx;   /* 原来是 40rpx，改成 120rpx 往下挪 */
+  top: 160rpx;           /* 原来是 40rpx，已向下移 */
   right: 30rpx;
   display: flex;
   align-items: center;
   padding: 10rpx 16rpx;
-  background-color: #ffffff;
+
+  background-color: rgba(255, 255, 255, 0.2);  /* 半透明白 */
+  backdrop-filter: blur(8px);                 /* 添加模糊 */
+
   border-radius: 32rpx;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
   z-index: 1000;
@@ -224,6 +239,10 @@ swiper-item {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+
+  background-color: rgba(255, 255, 255, 0.4); /* 半透明背景 */
+  border-radius: 24rpx;
+  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.1);
   padding: 16rpx;
 }
 
@@ -232,10 +251,13 @@ swiper-item {
   margin-right: 16rpx;
   font-size: 28rpx;
   color: #333;
-  border: 1px solid #ddd;
+
+  border: 1px solid rgba(255, 255, 255, 0.3); /* 边框也透明一点 */
   border-radius: 12rpx;
   padding: 8rpx 16rpx;
-  background-color: #f9f9f9;
+
+  background-color: rgba(255, 255, 255, 0.3); /* 半透明背景 */
+  backdrop-filter: blur(4px); /* 可选：磨砂效果 */
 }
 
 .submit-btn {
@@ -319,4 +341,14 @@ button {
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
+}
+
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  z-index: -1;
 }

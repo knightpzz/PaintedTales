@@ -1,4 +1,8 @@
+
+
 <view class="container">
+
+  <image class="background" src="../../image/background_history.png"mode="aspectFill"/>
 
 
 <!-- 用户信息：放到页面右上角 -->
