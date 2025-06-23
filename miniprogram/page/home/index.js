@@ -9,7 +9,17 @@ Page({
     // 新增：生成类型选择项
     typeOptions: ['生成图片', '生成视频'],
     typeIndex: 1,  // 默认“生成视频”
-    generationType: 'video'  // 可选值：'image' | 'video'
+    generationType: 'video',  // 可选值：'image' | 'video'
+    avatars: [
+      { name: '头像1', src: '../../image/maodie1.jpg' },
+      { name: '头像2', src: '../../image/maodie2.png' },
+      { name: '头像3', src: '../../image/maodie3.png' },
+      { name: '头像4', src: '../../image/maodie4.png' },
+      { name: '头像5', src: '../../image/maodie5.png' }
+
+    ],
+    currentAvatar: '../../image/maodie.png',  // 默认头像路径
+
   },
 
 
@@ -29,6 +39,13 @@ Page({
 
   // 页面加载时获取全局用户信息
   onLoad() {
+    const avatarUrl = this.data.userInfo.avatarUrl;
+
+    this.setData({
+      currentAvatar: avatarUrl || '../../image/maodie.png', 
+    });
+
+    
 
     wx.cloud.init({
       env: 'cloud1-8gmijxcx249b2dbf'  // 请使用正确的环境ID
@@ -36,6 +53,7 @@ Page({
     const userInfo = getApp().globalData.userInfo || {};  // 获取全局数据中的用户信息
     this.setData({ userInfo });
   },
+  
 
   onInput(e) {
     this.setData({
@@ -342,6 +360,29 @@ Page({
       }
     });
   },
+
+  changeAvatar() {
+    this.setData({
+      showModal: true,  // 显示头像选择弹窗
+    });
+  },
+
+  selectAvatar(event) {
+    const selectedAvatar = event.currentTarget.dataset.src;  // 获取选中的头像路径
+    this.setData({
+      currentAvatar: selectedAvatar,  // 更新当前头像
+      'userInfo.avatarUrl': selectedAvatar,  // 更新用户选择的头像
+      showModal: false,  // 关闭弹窗
+    });
+  },
+
+  closeModal() {
+    this.setData({
+      showModal: false,  // 关闭弹窗
+    });
+  }
+
+
 
 
 });
