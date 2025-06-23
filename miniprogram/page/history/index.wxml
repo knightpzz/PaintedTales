@@ -1,77 +1,71 @@
-<view class="custom-nav">
-  <image class="back-icon" src="../../image/wechat.png" bindtap="goBack"></image>
-  <text class="nav-title">历史记录</text>
-</view>
-<!-- 🔍 搜索栏 -->
-<view class="search-bar">
-  <input class="search-input" placeholder="请输入关键词搜索"
-         bindinput="onSearchInput"
-         confirm-type="search"
-         bindconfirm="onSearchConfirm"
-         value="{{searchKeyword}}" />
-  <button class="search-btn" bindtap="onSearchConfirm">搜索</button>
-</view>
+<view class="page-container">
+  <view class="custom-nav">
+    <image class="back-icon" src="../../image/wechat.png" bindtap="goBack"></image>
+    <text class="nav-title">历史记录</text>
+  </view>
 
-<scroll-view scroll-y="true" style="height: 100vh;">
-  <view class="history-page">
+  <view class="search-bar">
+    <input class="search-input" placeholder="请输入关键词搜索" bindinput="onSearchInput" confirm-type="search" bindconfirm="onSearchConfirm" value="{{searchKeyword}}" />
+    <button class="search-btn" bindtap="onSearchConfirm">搜索</button>
+  </view>
 
-    <block wx:for="{{historyList}}" wx:key="id">
-      <view class="history-item">
-        <text>关键词：{{item.inputText}}</text>
+  <scroll-view class="scroll-area" scroll-y="true">
+    <view class="history-page">
 
-        <!-- ✅ 新增描述信息显示 -->
-        <view class="description-block">
-          <text class="desc-text" wx:if="{{!item.showFullDescription}}">
-            {{item.descriptionPreview}}
-          </text>
+      <block wx:for="{{historyList}}" wx:key="id">
+        <view class="history-item">
+          <text>关键词：{{item.inputText}}</text>
 
-          <view wx:elif="{{item.showFullDescription}}">
-            <block wx:for="{{item.description}}" wx:key="*this">
-              <text class="desc-line">· {{item}}</text>
-            </block>
+          <!-- ✅ 新增描述信息显示 -->
+          <view class="description-block">
+            <text class="desc-text" wx:if="{{!item.showFullDescription}}">
+              {{item.descriptionPreview}}
+            </text>
+
+            <view wx:elif="{{item.showFullDescription}}">
+              <block wx:for="{{item.description}}" wx:key="*this">
+                <text class="desc-line">· {{item}}</text>
+              </block>
+            </view>
+
+            <text class="toggle-btn" data-index="{{index}}" bindtap="toggleDescription">
+              {{item.showFullDescription ? '收起' : '展开'}}
+            </text>
           </view>
 
-          <text class="toggle-btn" data-index="{{index}}" bindtap="toggleDescription">
-            {{item.showFullDescription ? '收起' : '展开'}}
-          </text>
+
+
+
+          <!-- 判断记录类型：图片或视频 -->
+          <view wx:if="{{item.type === 'image'}}">
+            <swiper class="swiper" indicator-dots circular autoplay>
+              <block wx:for="{{item.images}}" wx:key="*this">
+                <swiper-item>
+                  <image src="{{item}}" mode="aspectFill" class="image" />
+
+                </swiper-item>
+              </block>
+            </swiper>
+            <!-- 批量下载图片-->
+            <button bindtap="downloadAllImages" data-item="{{item}}" class="download-btn">下载图片</button>
+          </view>
+
+          <view wx:elif="{{item.type === 'video'}}">
+            <video src="{{item.videoUrl}}" controls class="video-player" initial-time="0" autoplay="false" loop="false"></video>
+            <!-- 添加下载视频按钮 -->
+            <button bindtap="downloadVideo" data-url="{{item.videoUrl}}" class="download-btn">下载视频</button>
+          </view>
+
+
+          <view class="history-footer">
+            <text class="timestamp">生成时间：{{item.createdAtFormatted}}</text>
+            <!-- 收藏按钮 -->
+            <image class="favor-btn" src="../../image/{{item.isFavor ? 'favor-filled' : 'favor'}}.png" data-id="{{item._id}}" bindtap="onToggleFavor" />
+            <image class="delete-icon" src="../../image/trash.png" data-id="{{item._id}}" bindtap="onDeleteConfirm" />
+          </view>
+          <view class="bottom-gap" style="height: 10rpx;"></view>
         </view>
-
-
-
-
-        <!-- 判断记录类型：图片或视频 -->
-        <view wx:if="{{item.type === 'image'}}">
-          <swiper class="swiper" indicator-dots circular autoplay>
-            <block wx:for="{{item.images}}" wx:key="*this">
-              <swiper-item>
-                <image src="{{item}}" mode="aspectFill" class="image" />
-
-              </swiper-item>
-            </block>
-          </swiper>
-          <!-- 批量下载图片-->
-          <button bindtap="downloadAllImages" data-item="{{item}}" class="download-btn">下载图片</button>
-        </view>
-
-        <view wx:elif="{{item.type === 'video'}}">
-          <video src="{{item.videoUrl}}" controls class="video-player" initial-time="0" autoplay="false" loop="false"></video>
-          <!-- 添加下载视频按钮 -->
-           <button bindtap="downloadVideo" data-url="{{item.videoUrl}}" class="download-btn">下载视频</button>
-        </view>
-
-
-        <view class="history-footer">
-          <text class="timestamp">生成时间：{{item.createdAt}}</text>
-          <!-- 收藏按钮 -->
-          <image class="favor-btn" src="../../image/{{item.isFavor ? 'favor-filled' : 'favor'}}.png" data-id="{{item._id}}" bindtap="onToggleFavor" />
-
-
-          <image class="delete-icon" src="../../image/trash.png" data-id="{{item._id}}" bindtap="onDeleteConfirm" />
-        </view>
-
-      </view>
-    </block>
-
-  </view>
-  <view class="bottom-gap" style="height: 100rpx;"></view>
-</scroll-view>
+      </block>
+    </view>
+  </scroll-view>
+</view>

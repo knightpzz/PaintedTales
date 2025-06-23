@@ -12,38 +12,41 @@ Page({
     wx.cloud.database().collection('history')
       .get()
       .then(({ data }) => {
-        // 前端排序：先按 isFavor 降序，再按 createdAt 降序
-        const sorted = [...data].sort((a, b) => {
-          if ((a.isFavor ? 1 : 0) === (b.isFavor ? 1 : 0)) {
-            return new Date(b.createdAt) - new Date(a.createdAt);
-          }
-          return (b.isFavor ? 1 : 0) - (a.isFavor ? 1 : 0);
-        });
-
-        const list = sorted.map(item => {
+        const processed = data.map(item => {
+          const createdDate = new Date(item.createdAt); // 强制转为 Date
           const previewSegments = (item.description || []).slice(0, 2);
-          let previewText = previewSegments.join('；').replace(/[\r\n]+/g, ' ');
+          const previewText = previewSegments.join('；').replace(/[\r\n]+/g, ' ');
           const maxLength = 50;
-          const descriptionPreview = previewText.length > maxLength
-            ? previewText.slice(0, maxLength) + '...'
-            : previewText;
-
+  
           return {
             ...item,
-            showFullDescription: false,
-            descriptionPreview
+            createdAt: createdDate,
+            createdAtFormatted: createdDate.toLocaleString('zh-CN', { hour12: false }),
+            descriptionPreview: previewText.length > maxLength
+              ? previewText.slice(0, maxLength) + '...'
+              : previewText,
+            showFullDescription: false
           };
         });
-
+  
+        // 正确排序逻辑：先收藏优先，再按时间倒序（新在前）
+        const sortedList = processed.sort((a, b) => {
+          if (a.isFavor === b.isFavor) {
+            return b.createdAt.getTime() - a.createdAt.getTime(); // 时间倒序
+          }
+          return b.isFavor - a.isFavor; // 收藏在前
+        });
+  
         this.setData({
-          historyList: list,
-          allHistoryList: list
+          historyList: sortedList,
+          allHistoryList: sortedList
         });
       })
       .catch(err => {
         console.error('❌ 获取失败', err);
       });
   },
+  
   
   onSearchInput(e) {
     const keyword = e.detail.value;

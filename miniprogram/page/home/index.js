@@ -189,7 +189,7 @@ Page({
         'Authorization': 'Bearer cae5d8c2-cd63-463c-8986-f5cb3f1c3ece'
       },
       data: {
-        model: 'doubao-seedance-1-0-pro-250528',
+        model: 'doubao-seedance-1-0-lite-t2v-250428',
         content: [
           {
             type: 'text',
@@ -312,7 +312,7 @@ Page({
   saveGenerationHistory(type, data) {
     const db = wx.cloud.database();
     // 格式化日期为 'YYYY-MM-DD HH:MM:SS' 格式
-    const now = new Date().toLocaleString();
+    const now = new Date()
 
     const historyRecord = {
       inputText: this.data.userInput || '',

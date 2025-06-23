@@ -170,3 +170,25 @@
   background-color: #409EFF;
   color: white;
 }
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.custom-nav {
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 20rpx;
+}
+
+.search-bar {
+  display: flex;
+  padding: 16rpx;
+}
+
+.scroll-area {
+  flex: 1;
+  overflow: scroll;
+}
