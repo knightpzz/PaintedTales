@@ -287,3 +287,36 @@ swiper-item {
   border-radius: 50%;
   cursor: pointer;
 }
+
+/* 编辑昵称弹窗 */
+.edit-nickname-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 100;
+}
+
+.nickname-input {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 5px;
+}
+
+.nickname {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}

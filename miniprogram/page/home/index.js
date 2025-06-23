@@ -20,6 +20,9 @@ Page({
     ],
     currentAvatar: '../../image/maodie.png',  // 默认头像路径
 
+    isEditing: false,  // 是否处于编辑状态
+    newNickname: '',  // 存储输入的昵称
+
   },
 
 
@@ -43,11 +46,18 @@ Page({
     wx.cloud.init({
       env: 'cloud1-8gmijxcx249b2dbf'  // 请使用正确的环境ID
     });
+    
     const userInfo = getApp().globalData.userInfo || {};  // 获取全局数据中的用户信息
-    this.setData({ userInfo });
+    this.setData({  
+      userInfo: userInfo,
+      newNickname: userInfo.nickName || '微信用户',  // 初始化为当前昵称
+    });
     // 获取用户头像并显示
     this.getAvatarFromCloud();
+    this. getNickNameFromCloud();
   },
+
+  
   
 
   onInput(e) {
@@ -364,20 +374,25 @@ Page({
     // 获取当前用户ID
     const userId = getApp().globalData.userInfo.openid;  // 假设使用 openid 作为用户ID
 
-    // 查询用户头像
-    userAvatars.where({ userId: userId }).get({
-      success: (res) => {
-        if (res.data.length > 0) {
-          // 如果查询到头像数据，更新当前头像
-          this.setData({
-            currentAvatar: res.data[0].avatarUrl,
-          });
-        }
-      },
-      fail: (err) => {
-        console.error('获取头像失败', err);
+    // 查询用户头像，按创建时间降序排列，获取最新的头像
+  userAvatars.where({ userId: userId })
+  .orderBy('createdAt', 'desc')  // 按 createdAt 降序排列
+  .limit(1)  // 限制返回1条数据（最新一条记录）
+  .get({
+    success: (res) => {
+      if (res.data.length > 0) {
+        // 如果查询到最新的头像数据，更新当前头像
+        this.setData({
+          currentAvatar: res.data[0].avatarUrl,  // 获取最新的头像
+        });
+      } else {
+        console.log('未找到头像数据');
       }
-    });
+    },
+    fail: (err) => {
+      console.error('获取头像失败', err);
+    }
+  });
   },
 
   // 用户点击头像时调用的函数，显示头像选择弹窗
@@ -422,7 +437,109 @@ Page({
     this.setData({
       showModal: false,  // 关闭弹窗
     });
-  }
+  },
+
+
+  // 点击昵称时触发，显示输入框
+  editNickname() {
+    this.setData({
+      isEditing: true,  // 显示输入框
+    });
+  },
+
+  // 监听昵称输入框的内容
+  onNicknameInput(event) {
+    this.setData({
+      newNickname: event.detail.value,  // 更新输入的昵称
+    });
+  },
+
+  // 点击保存按钮保存新的昵称
+  saveNickname() {
+    const newNickname = this.data.newNickname;
+    if (!newNickname) {
+      wx.showToast({
+        title: '昵称不能为空',
+        icon: 'none',
+      });
+      return;
+    }
+
+    // 更新全局的用户信息
+    getApp().globalData.userInfo.nickName = newNickname;
+    this.setData({
+      'userInfo.nickName': newNickname,  // 更新页面上的昵称
+      isEditing: false,  // 关闭编辑框
+    });
+
+    // 保存新昵称到云数据库
+    this.saveNicknameToCloud(newNickname);
+  },
+
+  // 点击取消按钮，关闭编辑框
+  cancelEdit() {
+    this.setData({
+      isEditing: false,  // 关闭编辑框
+      newNickname: this.data.userInfo.nickName,  // 恢复原昵称
+    });
+  },
+
+  // 保存昵称到云数据库
+  saveNicknameToCloud(newNickname) {
+    const db = wx.cloud.database();
+    const userCollection = db.collection('userName');  // 假设云数据库集合名为 'userName'
+
+    // 获取用户ID（这里使用 openid 作为示例）
+    const userId = getApp().globalData.userInfo.openid;
+
+    // 更新昵称
+    userCollection.add({
+      data: {
+        userId: userId,  // 用户唯一标识
+        userName: newNickname,  // 用户的昵称
+        createdAt: db.serverDate(),  // 创建时间
+      },
+      success(res) {
+        console.log('昵称保存成功:', res);
+        // 这里可以调用其他操作，更新界面等
+      },
+      fail(err) {
+        console.error('保存昵称失败:', err);
+      }
+    });
+  },
+
+    // 获取云数据库中的头像信息
+    getNickNameFromCloud() {
+      const db = wx.cloud.database();
+      const userAvatars = db.collection('userName');  // 云数据库集合
+  
+      // 获取当前用户ID
+      const userId = getApp().globalData.userInfo.openid;  // 假设使用 openid 作为用户ID
+  
+      // 查询用户头像，按创建时间降序排列，获取最新的头像
+    userAvatars.where({ userId: userId })
+    .orderBy('createdAt', 'desc')  // 按 createdAt 降序排列
+    .limit(1)  // 限制返回1条数据（最新一条记录）
+    .get({
+      success: (res) => {
+        if (res.data.length > 0) {
+          // 如果查询到最新的头像数据，更新当前头像
+          this.setData({
+            'userInfo.nickName': res.data[0].userName,  // 获取最新的头像
+          });
+        } else {
+          console.log('未找到昵称数据');
+        }
+      },
+      fail: (err) => {
+        console.error('获取昵称失败', err);
+      }
+    });
+    }
+
+
+
 
 
 
