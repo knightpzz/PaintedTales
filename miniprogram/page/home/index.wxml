@@ -5,8 +5,29 @@
 <view class="user-info">
    <!-- 如果用户有头像，则显示该头像 -->
     <image src="{{currentAvatar}}" class="avatar" bindtap="changeAvatar"></image>
-  <text class="username">{{userInfo.nickName}}</text>
+ <!-- 显示昵称 -->
+ <view class="nickname" bindtap="editNickname">
+      <text>{{userInfo.nickName}}</text>
+    </view>
 </view>
+
+<!-- 弹出输入框修改昵称 -->
+<view wx:if="{{isEditing}}" class="edit-nickname-modal">
+    <input 
+      class="nickname-input"
+      type="text"
+      placeholder="输入新的昵称"
+      value="{{newNickname}}"
+      bindinput="onNicknameInput"
+    />
+    <button bindtap="saveNickname">保存</button>
+    <button bindtap="cancelEdit">取消</button>
+  </view>
+
+
+
+
+
 
 
 
@@ -75,4 +96,7 @@
       </block>
     </view>
   </view>
+
+
 </view>
+
