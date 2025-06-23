@@ -39,19 +39,14 @@ Page({
 
   // 页面加载时获取全局用户信息
   onLoad() {
-    const avatarUrl = this.data.userInfo.avatarUrl;
-
-    this.setData({
-      currentAvatar: avatarUrl || '../../image/maodie.png', 
-    });
-
-    
 
     wx.cloud.init({
       env: 'cloud1-8gmijxcx249b2dbf'  // 请使用正确的环境ID
     });
     const userInfo = getApp().globalData.userInfo || {};  // 获取全局数据中的用户信息
     this.setData({ userInfo });
+    // 获取用户头像并显示
+    this.getAvatarFromCloud();
   },
   
 
@@ -361,18 +356,65 @@ Page({
     });
   },
 
+  // 获取云数据库中的头像信息
+  getAvatarFromCloud() {
+    const db = wx.cloud.database();
+    const userAvatars = db.collection('userAvatars');  // 云数据库集合
+
+    // 获取当前用户ID
+    const userId = getApp().globalData.userInfo.openid;  // 假设使用 openid 作为用户ID
+
+    // 查询用户头像
+    userAvatars.where({ userId: userId }).get({
+      success: (res) => {
+        if (res.data.length > 0) {
+          // 如果查询到头像数据，更新当前头像
+          this.setData({
+            currentAvatar: res.data[0].avatarUrl,
+          });
+        }
+      },
+      fail: (err) => {
+        console.error('获取头像失败', err);
+      }
+    });
+  },
+
+  // 用户点击头像时调用的函数，显示头像选择弹窗
   changeAvatar() {
     this.setData({
       showModal: true,  // 显示头像选择弹窗
     });
   },
 
+  // 用户选择头像时调用的函数
   selectAvatar(event) {
     const selectedAvatar = event.currentTarget.dataset.src;  // 获取选中的头像路径
     this.setData({
       currentAvatar: selectedAvatar,  // 更新当前头像
-      'userInfo.avatarUrl': selectedAvatar,  // 更新用户选择的头像
       showModal: false,  // 关闭弹窗
+    });
+
+    // 获取用户ID
+    const userId = getApp().globalData.userInfo.openid;
+
+    // 获取云数据库引用
+    const db = wx.cloud.database();
+    const userAvatars = db.collection('userAvatars');  // 指定集合
+
+    // 保存头像路径到云数据库
+    userAvatars.add({
+      data: {
+        userId: userId,  // 用户唯一标识
+        avatarUrl: selectedAvatar,  // 选中的头像路径
+        createdAt: db.serverDate(),  // 记录创建时间
+      },
+      success(res) {
+        console.log('头像保存成功:', res);
+      },
+      fail(err) {
+        console.error('保存头像失败:', err);
+      }
     });
   },
 
