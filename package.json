@@ -47,6 +47,7 @@
     "typescript-eslint-parser": "^18.0.0"
   },
   "dependencies": {
-    "miniprogram-ci": "^1.3.13"
+    "miniprogram-ci": "^1.3.13",
+    "mp-html": "^2.5.1"
   }
 }

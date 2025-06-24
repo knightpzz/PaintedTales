@@ -1,3 +1,4 @@
+const marked = require('../../util/marked.umd.js')
 Page({
   data: {
     historyList: [],
@@ -6,29 +7,44 @@ Page({
   },
 
 
-
-
   onLoad() {
     wx.cloud.database().collection('history')
       .get()
       .then(({ data }) => {
         const processed = data.map(item => {
-          const createdDate = new Date(item.createdAt); // 强制转为 Date
-          const previewSegments = (item.description || []).slice(0, 2);
-          const previewText = previewSegments.join('；').replace(/[\r\n]+/g, ' ');
-          const maxLength = 50;
+          const createdDate = new Date(item.createdAt); // 强制转为 Date1
+          // const previewSegments = (item.description || []).slice(0, 2);
+          // const previewText = previewSegments.join('；').replace(/[\r\n]+/g, ' ');
+          // const mdDescription = item.description;
+          // md本
+          const mdStr = (item.description || []).join('\n\n');
+          const html = marked.parse(mdStr);
+          // md简短版
+          const previewMdStr = (item.description || []).join('\n\n');
+          // 用 Markdown 原文生成 previewText（干净的摘要）
+          const previewHtmlText = previewMdStr
+          .replace(/[#>*`-]/g, '')        // 去掉 markdown 标记
+          .replace(/[\r\n]+/g, ' ')       // 换行转空格
+          .slice(0, 50) + '...'
+
+          // const previewHtml = marked.parse(previewMdStr);
+          // const maxLength = 50;
   
           return {
             ...item,
-            createdAt: createdDate,
+            createdAt: createdDate,  
             createdAtFormatted: createdDate.toLocaleString('zh-CN', { hour12: false }),
-            descriptionPreview: previewText.length > maxLength
-              ? previewText.slice(0, maxLength) + '...'
-              : previewText,
-            showFullDescription: false
+            // descriptionPreview: previewText.length > maxLength
+            //   ? previewText.slice(0, maxLength) + '...'
+            //   : previewText,
+            showFullDescription: false,
+            descriptionHtml: html,
+            descriptionHtmlPreview: previewHtmlText
+            
+            // mdDescription = mdDescription
           };
         });
-  
+
         // 正确排序逻辑：先收藏优先，再按时间倒序（新在前）
         const sortedList = processed.sort((a, b) => {
           if (a.isFavor === b.isFavor) {
@@ -36,10 +52,14 @@ Page({
           }
           return b.isFavor - a.isFavor; // 收藏在前
         });
+
+        // const Description  = marked.parse(mdDescription)
+        
   
         this.setData({
           historyList: sortedList,
-          allHistoryList: sortedList
+          allHistoryList: sortedList,
+          // html: Description 
         });
       })
       .catch(err => {

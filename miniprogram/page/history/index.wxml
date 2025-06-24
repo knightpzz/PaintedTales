@@ -19,13 +19,11 @@
           <!-- ✅ 新增描述信息显示 -->
           <view class="description-block">
             <text class="desc-text" wx:if="{{!item.showFullDescription}}">
-              {{item.descriptionPreview}}
+              {{item.descriptionHtmlPreview}}
             </text>
 
             <view wx:elif="{{item.showFullDescription}}">
-              <block wx:for="{{item.description}}" wx:key="*this">
-                <text class="desc-line">· {{item}}</text>
-              </block>
+              <mp-html content="{{item.descriptionHtml}}" />
             </view>
 
             <text class="toggle-btn" data-index="{{index}}" bindtap="toggleDescription">

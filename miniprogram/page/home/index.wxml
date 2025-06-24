@@ -69,14 +69,18 @@
   <!-- 插画轮播图展示 -->
   <!-- 图片轮播，仅在 imageList 有内容时显示 -->
   <view wx:if="{{imageList.length > 0}}">
-    <view>{{swiperKey}}</view>
-    <swiper class="swiper" circular indicator-dots autoplay interval="3000" duration="500" key="{{swiperKey}}">
-      <block wx:for="{{imageList}}" wx:key="index">
-        <swiper-item class="swiper-item">
-          <image src="{{item}}" mode="aspectFit" class="image" />
-        </swiper-item>
-      </block>
-    </swiper>
+     <!-- 弹出提示 -->
+  <view wx:if="{{showDialog}}">
+    <block wx:if="{{hasShownToast == false}}">
+      <script>
+        wx.showModal({
+          title: '提示',
+          content: '图片生成完成，请到历史记录查看',
+          showCancel: false
+        })
+      </script>
+    </block>
+  </view>
   </view>
 
 

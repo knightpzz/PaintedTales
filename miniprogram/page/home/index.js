@@ -120,10 +120,10 @@ Page({
       timeout: 30000,
       header: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer cae5d8c2-cd63-463c-8986-f5cb3f1c3ece'  // ⚠️生产中请勿暴露！
+        'Authorization': 'Bearer f654b644-c5cf-42ff-aad3-3ee606e04cab'  // ⚠️生产中请勿暴露！
       },
       data: {
-        model: 'doubao-seed-1-6-flash-250615',
+        model: 'doubao-1-5-pro-32k-250115',
         messages: [
           {
             role: 'user',
@@ -186,16 +186,31 @@ Page({
 
       this.saveGenerationHistory('image', urls);
 
-      this.setData({
+      this.setData(
+      {
         imageList: urls,
         swiperKey: Date.now() // 添加动态 key 强制重新渲染
         // swiperKey: Date.now() 
+      }, () => {
+        if (this.data.imageList.length > 0 && !this.data.hasShownDialog) {
+          wx.showModal({
+            title: '提示',
+            content: '图片生成完成，请在历史记录查看',
+            showCancel: false
+          })
+          this.setData({ hasShownDialog: true })
+        }
       });
 
 
     }).catch(err => {
       wx.hideLoading();
-      wx.showToast({ title: '部分图片生成失败', icon: 'none' });
+      // wx.showToast({ title: '部分图片生成失败', icon: 'none' });
+      wx.showModal({
+        title: '提示',
+        content: '图片生成失败，请重试',
+        showCancel: false
+      })
     });
   },
 
@@ -212,10 +227,10 @@ Page({
       timeout: 30000,
       header: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer cae5d8c2-cd63-463c-8986-f5cb3f1c3ece'
+        'Authorization': 'Bearer f654b644-c5cf-42ff-aad3-3ee606e04cab'
       },
       data: {
-        model: 'doubao-seedance-1-0-lite-t2v-250428',
+        model: 'doubao-seaweed-241128',
         content: [
           {
             type: 'text',
@@ -255,7 +270,7 @@ Page({
         timeout: 30000,
         header: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer cae5d8c2-cd63-463c-8986-f5cb3f1c3ece'
+          'Authorization': 'Bearer f654b644-c5cf-42ff-aad3-3ee606e04cab'
         },
         data: {
           model: 'doubao-seedream-3-0-t2i-250415',
@@ -299,14 +314,19 @@ Page({
         url: checkUrl,
         method: 'GET',
         header: {
-          'Authorization': 'Bearer cae5d8c2-cd63-463c-8986-f5cb3f1c3ece'
+          'Authorization': 'Bearer f654b644-c5cf-42ff-aad3-3ee606e04cab'
         },
         success: (res) => {
           console.log(`第${retryCount}次轮询：`, res.data);
           wx.showToast({ title: '视频正在努力生成中，请耐心等待', icon: 'none' });
           const status = res.data?.status;
           if (status === 'succeeded') {
-            wx.showToast({ title: '视频生成成功', icon: 'none' });
+            // wx.showToast({ title: '视频生成成功', icon: 'none' });
+            wx.showModal({
+              title: '提示',
+              content: '视频生成成功，请在历史记录查看',
+              showCancel: false
+            })
             clearInterval(interval);
             const videoUrl = res.data?.content?.video_url;
             if (videoUrl) {
@@ -320,7 +340,12 @@ Page({
             }
           } else if (status === 'failed') {
             clearInterval(interval);
-            wx.showToast({ title: '视频生成失败', icon: 'none' });
+            // wx.showToast({ title: '视频生成失败', icon: 'none' });
+            wx.showModal({
+              title: '提示',
+              content: '视频生成失败，请重试',
+              showCancel: false
+            })
           } else {
             console.log(`⏳ 视频状态：${status}`);
           }
