@@ -2,5 +2,8 @@
   "navigationBarTitleText": "历史记录",
   "enablePullDownRefresh": true,
   "navigationStyle": "custom",
-  "renderer": "skyline"
+  "renderer": "skyline",
+  "usingComponents": {
+    "mp-html": "mp-html"
+  }
 }
