@@ -13,12 +13,16 @@
         </view>
       </view>
 
-      <!-- 弹出输入框修改昵称 -->
-      <view wx:if="{{isEditing}}" class="edit-nickname-modal">
-        <input class="nickname-input" type="text" placeholder="输入新的昵称" value="{{newNickname}}" bindinput="onNicknameInput" />
-        <button bindtap="saveNickname">保存</button>
-        <button bindtap="cancelEdit">取消</button>
-      </view>
+      <!-- 修改 view 部分 -->
+<view wx:if="{{isEditing}}" class="edit-nickname-modal">
+  <input class="nickname-input" type="text" placeholder="输入新的昵称" value="{{newNickname}}" bindinput="onNicknameInput" />
+
+  <!-- 新增横向排列容器 -->
+  <view class="btn-group">
+    <button bindtap="saveNickname">保存</button>
+    <button bindtap="cancelEdit">取消</button>
+  </view>
+</view>
 
       <view class="history-btn" style="top: {{navTop}}rpx;" bindtap="goToHistory">
         <image src="../../image/play.png" class="history-icon"></image>

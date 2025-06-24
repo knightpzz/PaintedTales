@@ -57,7 +57,7 @@ Page({
     });
     // 获取用户头像并显示
     this.getAvatarFromCloud();
-    this. getNickNameFromCloud();
+    this.getNickNameFromCloud();
   },
 
   
@@ -395,6 +395,7 @@ Page({
   },
 
   // 获取云数据库中的头像信息
+  
   getAvatarFromCloud() {
     const db = wx.cloud.database();
     const userAvatars = db.collection('userAvatars');  // 云数据库集合
