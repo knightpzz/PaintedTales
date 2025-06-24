@@ -14,25 +14,62 @@ Page({
     isEditing: false,  // 是否处于编辑状态
     newNickname: '',  // 存储输入的昵称
   },
+
+  onLoad() {
+    wx.cloud.init({
+      env: 'cloud1-8gmijxcx249b2dbf'  // 请使用正确的环境ID
+    });
+
+  
+    // 获取系统信息（可选，用于布局调整）
+    const systemInfo = wx.getSystemInfoSync();
+   
+    console.log('页面宽高：', systemInfo.windowWidth, systemInfo.windowHeight);
+  
+    
+    // 从全局数据获取用户信息
+    const userInfo = getApp().globalData.userInfo;
+     // 同步从云数据库获取最新的头像和昵称
+    this.setData({  
+      userInfo: userInfo,
+      // newNickname: userInfo.nickName || '微信用户',  // 初始化为当前昵称
+    });
+
+  },
    // 获取用户信息
    getUserInfo() {
+    wx.cloud.init({
+      env: 'cloud1-8gmijxcx249b2dbf'  // 请使用正确的环境ID
+    });
+    
     wx.getUserProfile({
+      
       desc: '用于展示您的昵称和头像',
       success: res => {
         console.log('用户信息：', res.userInfo); // 打印用户信息，确认头像字段
+
+        getApp().globalData.userInfo = res.userInfo;
+        const userInfo = getApp().globalData.userInfo;
+          this.setData({
+              userInfo: userInfo
+          });
+            this.getAvatarFromCloud();
+            this.getNickNameFromCloud();
+        
 
         // 确保头像字段存在且非空
         if (res.userInfo.avatarUrl) {
           this.setData({
             userInfo: res.userInfo
           });
-
           // 将用户信息保存到全局数据
           getApp().globalData.userInfo = res.userInfo;
+          
 
           // 获取 OpenID 并跳转
           getApp().getUserOpenId(openid => {
-            getApp().globalData.openid = openid;
+          getApp().globalData.openid = openid;
+          
 
             // 登录成功后跳转到主页
             wx.redirectTo({
@@ -46,6 +83,7 @@ Page({
           });
         }
       },
+
       fail: () => {
         wx.showToast({
           title: '授权失败，请重试！',
@@ -213,38 +251,7 @@ Page({
     })
   },
   // 页面加载时获取全局用户信息
-  onLoad() {
-    wx.cloud.init({
-      env: 'cloud1-8gmijxcx249b2dbf'  // 请使用正确的环境ID
-    });
-  
-    // 获取系统信息（可选，用于布局调整）
-    const systemInfo = wx.getSystemInfoSync();
-    console.log('页面宽高：', systemInfo.windowWidth, systemInfo.windowHeight);
-  
-    // 从全局数据获取用户信息
-    const userInfo = getApp().globalData.userInfo;
-  
-    // 判断用户信息是否有效（此处根据昵称和头像是否存在判断）
-    if (userInfo && userInfo.nickName && userInfo.avatarUrl) {
-      // 用户已登录，初始化页面数据
-      this.setData({
-        userInfo: userInfo,
-        newNickname: userInfo.nickName,
-      });
-  
-      // 同步从云数据库获取最新的头像和昵称
-      this.getAvatarFromCloud();
-      this.getNickNameFromCloud();
-    } else {
-      // 用户未登录，清空数据，页面显示登录按钮
-      this.setData({
-        userInfo: null,
-        newNickname: '',
-        currentAvatar: '../../image/maodie.png',  // 默认头像
-      });
-    }
-  },
+ 
   
 
   // 获取云数据库中的头像信息
@@ -256,23 +263,24 @@ Page({
     const userId = getApp().globalData.userInfo.openid;  // 假设使用 openid 作为用户ID
 
     // 查询用户头像，按创建时间降序排列，获取最新的头像
-    userAvatars.where({ userId: userId })
-      .orderBy('createdAt', 'desc')  // 按 createdAt 降序排列
-      .limit(1)  // 限制返回1条数据（最新一条记录）
-      .get({
-        success: (res) => {
-          if (res.data.length > 0) {
-            // 如果查询到最新的头像数据，更新当前头像
-            this.setData({
-              currentAvatar: res.data[0].avatarUrl,  // 获取最新的头像
-            });
-          } else {
-            console.log('未找到头像数据');
-          }
-        },
-        fail: (err) => {
-          console.error('获取头像失败', err);
-        }
-      });
+  userAvatars.where({ userId: userId })
+  .orderBy('createdAt', 'desc')  // 按 createdAt 降序排列
+  .limit(1)  // 限制返回1条数据（最新一条记录）
+  .get({
+    success: (res) => {
+      if (res.data.length > 0) {
+        // 如果查询到最新的头像数据，更新当前头像
+        this.setData({
+          currentAvatar: res.data[0].avatarUrl,  // 获取最新的头像
+        });
+      } else {
+        console.log('未找到头像数据');
+      }
+    },
+    fail: (err) => {
+      console.error('获取头像失败', err);
+    }
+  });
   },
+  
 });

@@ -51,11 +51,34 @@
 
 /* 弹出输入框修改昵称样式 */
 .edit-nickname-modal {
-  margin: 15rpx 0 30rpx 0;
-  display: flex;
-  align-items: center;
-  gap: 10rpx;
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 40rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.2);
+  z-index: 1000;
 }
+
+/* 样式部分新增 btn-group */
+.btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 20rpx;
+  margin-top: 20rpx;
+}
+
+.btn-group button {
+  width: 120rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+}
+
+
 
 .nickname-input {
   flex: 1;
