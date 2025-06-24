@@ -1,0 +1,252 @@
+/* 容器整体样式 */
+.container {
+  padding: 20rpx;
+  background-color: #fff;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #333;
+}
+
+/* 用户信息区域，放右上角 */
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 15rpx;
+  margin-bottom: 30rpx;
+}
+
+/* 用户头像样式 */
+.avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2rpx solid #1296db;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.avatar:hover {
+  transform: scale(1.1);
+}
+
+/* 用户昵称 */
+.nickname {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1296db;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* 用户页面主体 */
+.user-page {
+  padding: 20rpx;
+  border-radius: 12rpx;
+  background-color: #f9f9f9;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.1);
+}
+
+/* 弹出输入框修改昵称样式 */
+.edit-nickname-modal {
+  margin: 15rpx 0 30rpx 0;
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.nickname-input {
+  flex: 1;
+  padding: 10rpx 15rpx;
+  font-size: 28rpx;
+  border: 1rpx solid #ccc;
+  border-radius: 6rpx;
+  outline: none;
+  box-sizing: border-box;
+}
+
+/* 按钮通用样式 */
+button {
+  background-color: #1296db;
+  color: white;
+  padding: 10rpx 25rpx;
+  border: none;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0e7cc1;
+}
+
+button:active {
+  background-color: #0a5c8a;
+}
+
+/* 历史记录按钮 */
+.history-btn {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  margin-bottom: 30rpx;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  /* top 由 inline 样式动态控制 */
+}
+
+.history-icon {
+  width: 40rpx;
+  height: 40rpx;
+  object-fit: contain;
+}
+
+/* 输入框区域 */
+.input-section {
+  margin-bottom: 20rpx;
+}
+
+.input-box {
+  width: 100%;
+  padding: 12rpx 15rpx;
+  font-size: 28rpx;
+  border: 1rpx solid #ccc;
+  border-radius: 8rpx;
+  box-sizing: border-box;
+}
+
+.input-box:focus {
+  border-color: #1296db;
+  outline: none;
+}
+
+/* 类型选择与提交按钮同一行 */
+.button-section-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15rpx;
+}
+
+/* 选择器样式 */
+.type-picker {
+  flex: 1;
+}
+
+.picker-text {
+  font-size: 28rpx;
+  color: #555;
+  padding: 10rpx 15rpx;
+  border: 1rpx solid #ccc;
+  border-radius: 8rpx;
+  user-select: none;
+}
+
+/* 提交按钮固定大小 */
+.submit-btn {
+  flex-shrink: 0;
+  width: 120rpx;
+  text-align: center;
+}
+
+/* 弹窗样式 */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  width: 700rpx;
+  max-width: 90vw;
+  border-radius: 12rpx;
+  overflow: hidden;
+  box-shadow: 0 6rpx 15rpx rgba(0,0,0,0.25);
+  padding: 30rpx 25rpx;
+  box-sizing: border-box;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1296db;
+}
+
+/* 头像列表弹窗 */
+.avatar-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15rpx;
+  max-height: 400rpx;
+  overflow-y: auto;
+  padding-right: 10rpx;
+}
+
+/* 头像项 */
+.avatar-item {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2rpx solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.avatar-item:hover,
+.avatar-item.selected {
+  border-color: #1296db;
+}
+
+/* 让整个页面容器撑满屏幕，方便居中 */
+.container {
+  height: 100vh;
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center;     /* 垂直居中 */
+  flex-direction: column;  /* 纵向排列子元素 */
+  background-color: #fff;
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+
+/* 用户信息盒子：头像和昵称垂直排列居中 */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15rpx;
+}
+
+/* 头像样式 */
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3rpx solid #1296db;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.avatar:hover {
+  transform: scale(1.1);
+}
+

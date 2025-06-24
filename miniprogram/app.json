@@ -1,12 +1,7 @@
 {
   "pages": [
-    "page/component/index",
-    "page/API/index",
-    "page/cloud/index",
-    "page/extend/index",
-    "page/animation/index",
     "page/home/index",
-    "page/login/index" ,
+    "page/usr/index" ,
     "page/history/index"
   ],
 
@@ -93,7 +88,7 @@
     {
       "root": "packageAPI",
       "pages": [
-        "pages/api/login/login",
+        "pages/api/usr/usr",
         "pages/api/get-user-info/get-user-info",
         "pages/api/request-payment/request-payment",
         "pages/api/jump/jump",
@@ -401,40 +396,11 @@
     }
   ],
   "preloadRule": {
-    "page/component/index": {
-      "network": "all",
-      "packages": [
-        "packageComponent"
-      ]
-    },
-    "page/API/index": {
-      "network": "all",
-      "packages": [
-        "packageAPI"
-      ]
-    },
-    "packageAPI/pages/chattool/activity_assist/activity_assist": {
-      "network": "all",
-      "packages": [
-        "packageChatTool"
-      ]
-    },
-    "page/cloud/index": {
-      "network": "all",
-      "packages": [
-        "packageCloud"
-      ]
-    },
-    "page/extend/index": {
-      "network": "all",
-      "packages": [
-        "packageExtend"
-      ]
-    }
+   
   },
   "window": {
     "navigationBarTextStyle": "@navigationBarTextStyle",
-    "navigationBarTitleText": "演示",
+    "navigationBarTitleText": "绘说童话",
     "navigationBarBackgroundColor": "@navigationBarBackgroundColor",
     "backgroundColor": "@backgroundColor"
   },
@@ -445,33 +411,15 @@
     "backgroundColor": "@tabBarBackgroundColor",
     "list": [
       {
-        "pagePath": "page/component/index",
-        "iconPath": "@iconPathComponent",
-        "selectedIconPath": "@selectedIconPathComponent",
-        "text": "组件"
+        "pagePath": "page/home/index",
+        "iconPath": "assets/icons/home1.png",
+        "selectedIconPath": "assets/icons/home2.png",
+        "text": "首页"
       },
       {
-        "pagePath": "page/animation/index",
-        "iconPath": "@iconPathComponent",
-        "selectedIconPath": "@selectedIconPathComponent",
-        "text": "交互动画"
-      },
-      {
-        "pagePath": "page/API/index",
-        "iconPath": "@iconPathAPI",
-        "selectedIconPath": "@selectedIconPathAPI",
-        "text": "接口"
-      },
-      {
-        "pagePath": "page/cloud/index",
-        "iconPath": "@iconPathCloud",
-        "selectedIconPath": "@selectedIconPathCloud",
-        "text": "云开发"
-      },
-      {
-        "pagePath": "page/login/index",
-        "iconPath": "@iconPathCloud",
-        "selectedIconPath": "@selectedIconPathCloud",
+        "pagePath": "page/usr/index",
+        "iconPath": "assets/icons/usr1.png",
+        "selectedIconPath": "assets/icons/usr2.png",
         "text": "用户"
       }
     ]

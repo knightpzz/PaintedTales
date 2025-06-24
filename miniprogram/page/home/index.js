@@ -1,6 +1,6 @@
 Page({
   data: {
-    userInfo: {},    // 存储用户信息
+    // userInfo: {},    // 存储用户信息
     userInput: '',
     reply: '',
     descriptionList: [], // 五段插画描述，建议从豆包返回结果中解析
@@ -34,11 +34,11 @@ Page({
       generationType: type
     });
   },
-  goToHistory() {
-    wx.navigateTo({
-      url: '/page/history/index'
-    })
-  },
+  // goToHistory() {
+  //   wx.navigateTo({
+  //     url: '/page/history/index'
+  //   })
+  // },
 
   // 页面加载时获取全局用户信息
   onLoad() {

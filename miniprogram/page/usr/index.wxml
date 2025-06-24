@@ -1,0 +1,44 @@
+<view class="container">
+  <!-- 未登录状态，显示登录按钮 -->
+  <button wx:if="{{!userInfo}}" bindtap="getUserInfo">登录 / 授权</button>
+
+  <!-- 登录成功，显示用户页面 -->
+  <view wx:elif="{{userInfo}}">
+    <!-- 用户信息：放到页面右上角 -->
+    <view class="user-page">
+      <view class="user-info">
+        <image src="{{currentAvatar}}" class="avatar" bindtap="changeAvatar"></image>
+        <view class="nickname" bindtap="editNickname">
+          <text>{{userInfo.nickName}}</text>
+        </view>
+      </view>
+
+      <!-- 弹出输入框修改昵称 -->
+      <view wx:if="{{isEditing}}" class="edit-nickname-modal">
+        <input class="nickname-input" type="text" placeholder="输入新的昵称" value="{{newNickname}}" bindinput="onNicknameInput" />
+        <button bindtap="saveNickname">保存</button>
+        <button bindtap="cancelEdit">取消</button>
+      </view>
+
+      <view class="history-btn" style="top: {{navTop}}rpx;" bindtap="goToHistory">
+        <image src="../../image/play.png" class="history-icon"></image>
+        <text>历史记录</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 自定义弹窗 -->
+<view wx:if="{{showModal}}" class="modal">
+  <view class="modal-content">
+    <view class="modal-header">
+      <text>选择头像</text>
+      <button bindtap="closeModal">关闭</button>
+    </view>
+    <view class="avatar-list">
+      <block wx:for="{{avatars}}" wx:key="index">
+        <image src="{{item.src}}" class="avatar-item" bindtap="selectAvatar" data-src="{{item.src}}"></image>
+      </block>
+    </view>
+  </view>
+</view>

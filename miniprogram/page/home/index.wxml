@@ -1,32 +1,24 @@
-
-
 <view class="container">
 
-  <image class="background" src="../../image/background_history.png"mode="aspectFill"/>
+  <image class="background" src="../../image/background_history.png" mode="aspectFill" />
 
 
-<!-- 用户信息：放到页面右上角 -->
-<view class="user-info">
-   <!-- 如果用户有头像，则显示该头像 -->
-    <image src="{{currentAvatar}}" class="avatar" bindtap="changeAvatar"></image>
- <!-- 显示昵称 -->
- <view class="nickname" bindtap="editNickname">
+  <!-- 用户信息：放到页面右上角 -->
+  <!-- <view class="user-info"> -->
+    <!-- 如果用户有头像，则显示该头像 -->
+    <!-- <image src="{{currentAvatar}}" class="avatar" bindtap="changeAvatar"></image> -->
+    <!-- 显示昵称 -->
+    <!-- <view class="nickname" bindtap="editNickname">
       <text>{{userInfo.nickName}}</text>
     </view>
-</view>
+  </view> -->
 
-<!-- 弹出输入框修改昵称 -->
-<view wx:if="{{isEditing}}" class="edit-nickname-modal">
-    <input 
-      class="nickname-input"
-      type="text"
-      placeholder="输入新的昵称"
-      value="{{newNickname}}"
-      bindinput="onNicknameInput"
-    />
+  <!-- 弹出输入框修改昵称 -->
+  <!-- <view wx:if="{{isEditing}}" class="edit-nickname-modal">
+    <input class="nickname-input" type="text" placeholder="输入新的昵称" value="{{newNickname}}" bindinput="onNicknameInput" />
     <button bindtap="saveNickname">保存</button>
     <button bindtap="cancelEdit">取消</button>
-  </view>
+  </view> -->
 
 
 
@@ -37,23 +29,23 @@
 
 
 
-<view class="history-btn" style="top: {{navTop}}rpx;" bindtap="goToHistory">
-  <image src="../../image/play.png" class="history-icon"></image>
-  <text>历史记录</text>
-</view>
+  <!-- <view class="history-btn" style="top: {{navTop}}rpx;" bindtap="goToHistory">
+    <image src="../../image/play.png" class="history-icon"></image>
+    <text>历史记录</text>
+  </view> -->
 
   <!-- 输入框 -->
   <view class="input-section">
     <input class="input-box" type="text" placeholder="请输入不超过5个关键字，用空格隔开" bindinput="onInput" value="{{userInput}}" />
   </view>
 
-<!-- 类型选择与提交按钮在同一行 -->
-<view class="button-section-row">
-  <picker class="type-picker" mode="selector" value="{{typeIndex}}" range="{{typeOptions}}" bindchange="onTypeChange">
-    <view class="picker-text">当前模式：{{typeOptions[typeIndex]}}</view>
-  </picker>
-  <button class="submit-btn" bindtap="submitToDoubao">提交</button>
-</view>
+  <!-- 类型选择与提交按钮在同一行 -->
+  <view class="button-section-row">
+    <picker class="type-picker" mode="selector" value="{{typeIndex}}" range="{{typeOptions}}" bindchange="onTypeChange">
+      <view class="picker-text">当前模式：{{typeOptions[typeIndex]}}</view>
+    </picker>
+    <button class="submit-btn" bindtap="submitToDoubao">提交</button>
+  </view>
 
   <!-- 豆包回复 -->
   <!-- <view class="result-section" wx:if="{{reply}}">
@@ -69,18 +61,18 @@
   <!-- 插画轮播图展示 -->
   <!-- 图片轮播，仅在 imageList 有内容时显示 -->
   <view wx:if="{{imageList.length > 0}}">
-     <!-- 弹出提示 -->
-  <view wx:if="{{showDialog}}">
-    <block wx:if="{{hasShownToast == false}}">
-      <script>
-        wx.showModal({
-          title: '提示',
-          content: '图片生成完成，请到历史记录查看',
-          showCancel: false
-        })
-      </script>
-    </block>
-  </view>
+    <!-- 弹出提示 -->
+    <view wx:if="{{showDialog}}">
+      <block wx:if="{{hasShownToast == false}}">
+        <script>
+          wx.showModal({
+            title: '提示',
+            content: '图片生成完成，请到历史记录查看',
+            showCancel: false
+          })
+        </script>
+      </block>
+    </view>
   </view>
 
 
@@ -95,16 +87,10 @@
     </view>
     <view class="avatar-list">
       <block wx:for="{{avatars}}" wx:key="index">
-        <image 
-          src="{{item.src}}" 
-          class="avatar-item" 
-          bindtap="selectAvatar"
-          data-src="{{item.src}}"  
-        ></image>
+        <image src="{{item.src}}" class="avatar-item" bindtap="selectAvatar" data-src="{{item.src}}"></image>
       </block>
     </view>
   </view>
 
 
 </view>
-
