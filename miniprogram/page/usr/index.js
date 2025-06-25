@@ -41,15 +41,23 @@ Page({
     wx.cloud.init({
       env: 'cloud1-8gmijxcx249b2dbf'  // 请使用正确的环境ID
     });
+
+    
     
     wx.getUserProfile({
       
       desc: '用于展示您的昵称和头像',
       success: res => {
         console.log('用户信息：', res.userInfo); // 打印用户信息，确认头像字段
+       
 
         getApp().globalData.userInfo = res.userInfo;
         const userInfo = getApp().globalData.userInfo;
+        wx.showToast({
+          title: '正在确认用户信息，请稍等~',
+          icon: 'none',       // 不显示图标
+          duration: 900      // 持续时间：1 秒（单位 ms）
+        });
           this.setData({
               userInfo: userInfo
           });
@@ -84,6 +92,8 @@ Page({
         }
       },
 
+      
+
       fail: () => {
         wx.showToast({
           title: '授权失败，请重试！',
@@ -105,7 +115,12 @@ Page({
           url: '/page/home/index'  // 跳转到主页
         });
       }
+
+      
+
+      
     });
+    
   },
   // 用户点击头像时调用的函数，显示头像选择弹窗
   changeAvatar() {
