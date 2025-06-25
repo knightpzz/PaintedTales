@@ -72,15 +72,20 @@ Page({
     this.setData({
       userInfo: userInfo,
       newNickname: userInfo.nickName || '微信用户',
-      currentAvatar: userInfo.avatarUrl,
+      
     });
+    
+
+    
+
   
     // ✅ 可选：记录设备信息
     const systemInfo = wx.getSystemInfoSync();
+    // this.getAvatarFromCloud();
     console.log('页面宽高：', systemInfo.windowWidth, systemInfo.windowHeight);
   
     // ✅ 从云数据库获取 userProfile 的最新头像和昵称（覆盖本地显示）
-    // this.getUserProfileFromCloud(); 
+    this.getUserProfileFromCloud(); 
   },
   
 
@@ -388,7 +393,6 @@ Page({
     const db = wx.cloud.database();
     const userProfileCollection = db.collection('userProfile');
     const openid = app.globalData.userInfo?.openid;
-
     if (!openid) {
       console.error('缺少 openid，无法获取用户信息');
       return;
@@ -402,7 +406,7 @@ Page({
           // 更新全局数据和本地数据
           const fullUserInfo = {
             ...app.globalData.userInfo,
-            nickName: data.userName || '微信用户',
+            nickName: data.nickName || '微信用户',
             avatarUrl: data.avatarUrl || '../../image/maodie.png',
           };
 
