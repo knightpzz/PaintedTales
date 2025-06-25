@@ -33,7 +33,7 @@ Page({
             wx.showToast({ title: '登录失败', icon: 'none' });
             return;
           }
-          
+          // console.log('userInfo：', res.userInfo);
           const fullUserInfo = {
             ...res.userInfo,
             openid

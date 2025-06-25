@@ -42,42 +42,50 @@ Page({
 
   // 页面加载时获取全局用户信息
   onLoad() {
-
-    if (!(getApp().globalData.userInfo)) {
+    const app = getApp();
+  
+    // ⚠️ 判断是否已登录（有 userInfo 且 openid 不为 guest）
+    const userInfo = app.globalData.userInfo;
+    if (!userInfo || userInfo.openid === 'guest') {
       wx.showModal({
         title: '提示',
         content: '请到用户界面登录',
-        showCancel: false, // 只显示确定按钮
+        showCancel: false,
         success(res) {
           if (res.confirm) {
-            // 可以选择跳转
             wx.reLaunch({
-              url: '/page/usr/index' // 替换为你的主页路径
+              url: '/page/usr/index'
             });
           }
         }
       });
-    };
-
+      return; // 阻止后续逻辑执行
+    }
+  
+    // ✅ 初始化云环境
     wx.cloud.init({
-      env: 'cloud1-8gmijxcx249b2dbf'  // 请使用正确的环境ID
+      env: 'cloud1-8gmijxcx249b2dbf'
     });
-
-    const systemInfo = wx.getSystemInfoSync();
-  console.log('页面宽高：', systemInfo.windowWidth, systemInfo.windowHeight);
-    
-    const userInfo = getApp().globalData.userInfo || {};  // 获取全局数据中的用户信息
-    this.setData({  
+  
+    // ✅ 设置本页 userInfo 显示基本头像与昵称
+    console.log('userInfo：', userInfo);
+    this.setData({
       userInfo: userInfo,
-      newNickname: userInfo.nickName || '微信用户',  // 初始化为当前昵称
+      newNickname: userInfo.nickName || '微信用户',
+      currentAvatar: userInfo.avatarUrl,
     });
-    // 获取用户头像并显示
-    this.getAvatarFromCloud();
-    this.getNickNameFromCloud();
+  
+    // ✅ 可选：记录设备信息
+    const systemInfo = wx.getSystemInfoSync();
+    console.log('页面宽高：', systemInfo.windowWidth, systemInfo.windowHeight);
+  
+    // ✅ 从云数据库获取 userProfile 的最新头像和昵称（覆盖本地显示）
+    // this.getUserProfileFromCloud(); 
   },
+  
 
-  
-  
+
+
 
   onInput(e) {
     this.setData({
@@ -203,20 +211,20 @@ Page({
       this.saveGenerationHistory('image', urls);
 
       this.setData(
-      {
-        imageList: urls,
-        swiperKey: Date.now() // 添加动态 key 强制重新渲染
-        // swiperKey: Date.now() 
-      }, () => {
-        if (this.data.imageList.length > 0 && !this.data.hasShownDialog) {
-          wx.showModal({
-            title: '提示',
-            content: '图片生成完成，请在历史记录查看',
-            showCancel: false
-          })
-          this.setData({ hasShownDialog: true })
-        }
-      });
+        {
+          imageList: urls,
+          swiperKey: Date.now() // 添加动态 key 强制重新渲染
+          // swiperKey: Date.now() 
+        }, () => {
+          if (this.data.imageList.length > 0 && !this.data.hasShownDialog) {
+            wx.showModal({
+              title: '提示',
+              content: '图片生成完成，请在历史记录查看',
+              showCancel: false
+            })
+            this.setData({ hasShownDialog: true })
+          }
+        });
 
 
     }).catch(err => {
@@ -374,6 +382,45 @@ Page({
       });
     }, 5000);
   },
+  // 从 userProfile 集合中获取头像和昵称
+  getUserProfileFromCloud() {
+    const app = getApp();
+    const db = wx.cloud.database();
+    const userProfileCollection = db.collection('userProfile');
+    const openid = app.globalData.userInfo?.openid;
+
+    if (!openid) {
+      console.error('缺少 openid，无法获取用户信息');
+      return;
+    }
+
+    // 查询 userProfile 集合中当前用户的记录
+    userProfileCollection.doc(openid).get({
+      success: (res) => {
+        const data = res.data;
+        if (data) {
+          // 更新全局数据和本地数据
+          const fullUserInfo = {
+            ...app.globalData.userInfo,
+            nickName: data.userName || '微信用户',
+            avatarUrl: data.avatarUrl || '../../image/maodie.png',
+          };
+
+          app.globalData.userInfo = fullUserInfo;
+          this.setData({
+            userInfo: fullUserInfo,
+            newNickname: fullUserInfo.nickName,
+            currentAvatar: fullUserInfo.avatarUrl
+          });
+        } else {
+          console.log('未查询到用户信息');
+        }
+      },
+      fail: (err) => {
+        console.error('获取用户信息失败', err);
+      }
+    });
+  },
 
 
   saveGenerationHistory(type, data) {
@@ -411,33 +458,34 @@ Page({
   },
 
   // 获取云数据库中的头像信息
-  
+
   getAvatarFromCloud() {
-    const db = wx.cloud.database();
-    const userAvatars = db.collection('userAvatars');  // 云数据库集合
+    const app = getApp();
+    wx.getUserProfile({
+      desc: '用于展示您的昵称和头像',
+      success: res => {
+        app.getUserOpenId((err, openid) => {
+          if (err) {
+            console.error('获取openid失败', err);
+            wx.showToast({ title: '登录失败', icon: 'none' });
+            return;
+          }
 
-    // 获取当前用户ID
-    const userId = getApp().globalData.userInfo.openid;  // 假设使用 openid 作为用户ID
+          const fullUserInfo = {
+            ...res.userInfo,
+            openid
+          };
 
-    // 查询用户头像，按创建时间降序排列，获取最新的头像
-  userAvatars.where({ userId: userId })
-  .orderBy('createdAt', 'desc')  // 按 createdAt 降序排列
-  .limit(1)  // 限制返回1条数据（最新一条记录）
-  .get({
-    success: (res) => {
-      if (res.data.length > 0) {
-        // 如果查询到最新的头像数据，更新当前头像
-        this.setData({
-          currentAvatar: res.data[0].avatarUrl,  // 获取最新的头像
+          // 更新全局和本地数据
+          app.globalData.userInfo = fullUserInfo;
+          this.setData({ userInfo: fullUserInfo });
+
         });
-      } else {
-        console.log('未找到头像数据');
+      },
+      fail: () => {
+        console.log('获取头像失败')
       }
-    },
-    fail: (err) => {
-      console.error('获取头像失败', err);
-    }
-  });
+    });
   },
 
   // 用户点击头像时调用的函数，显示头像选择弹窗
@@ -460,22 +508,30 @@ Page({
 
     // 获取云数据库引用
     const db = wx.cloud.database();
-    const userAvatars = db.collection('userAvatars');  // 指定集合
 
-    // 保存头像路径到云数据库
-    userAvatars.add({
+    db.collection('userAvatars').doc(userId).set({
       data: {
-        userId: userId,  // 用户唯一标识
-        avatarUrl: selectedAvatar,  // 选中的头像路径
-        createdAt: db.serverDate(),  // 记录创建时间
+        avatarUrl: selectedAvatar,
+        updatedAt: db.serverDate()
       },
-      success(res) {
-        console.log('头像保存成功:', res);
+      success: res => {
+        console.log('头像已更新:', res);
       },
-      fail(err) {
-        console.error('保存头像失败:', err);
+      fail: err => {
+        if (err.errCode === 11) {  // 文档不存在，首次创建
+          db.collection('userAvatars').add({
+            data: {
+              _id: userId,
+              avatarUrl: selectedAvatar,
+              createdAt: db.serverDate()
+            }
+          });
+        } else {
+          console.error('头像更新失败:', err);
+        }
       }
     });
+
   },
 
   closeModal() {
@@ -554,34 +610,34 @@ Page({
     });
   },
 
-    // 获取云数据库中的头像信息
-    getNickNameFromCloud() {
-      const db = wx.cloud.database();
-      const userAvatars = db.collection('userName');  // 云数据库集合
-  
-      // 获取当前用户ID
-      const userId = getApp().globalData.userInfo.openid;  // 假设使用 openid 作为用户ID
-  
-      // 查询用户头像，按创建时间降序排列，获取最新的头像
+  // 获取云数据库中的头像信息
+  getNickNameFromCloud() {
+    const db = wx.cloud.database();
+    const userAvatars = db.collection('userName');  // 云数据库集合
+
+    // 获取当前用户ID
+    const userId = getApp().globalData.userInfo.openid;  // 假设使用 openid 作为用户ID
+
+    // 查询用户头像，按创建时间降序排列，获取最新的头像
     userAvatars.where({ userId: userId })
-    .orderBy('createdAt', 'desc')  // 按 createdAt 降序排列
-    .limit(1)  // 限制返回1条数据（最新一条记录）
-    .get({
-      success: (res) => {
-        if (res.data.length > 0) {
-          // 如果查询到最新的头像数据，更新当前头像
-          this.setData({
-            'userInfo.nickName': res.data[0].userName,  // 获取最新的头像
-          });
-        } else {
-          console.log('未找到昵称数据');
+      .orderBy('createdAt', 'desc')  // 按 createdAt 降序排列
+      .limit(1)  // 限制返回1条数据（最新一条记录）
+      .get({
+        success: (res) => {
+          if (res.data.length > 0) {
+            // 如果查询到最新的头像数据，更新当前头像
+            this.setData({
+              'userInfo.nickName': res.data[0].userName,  // 获取最新的头像
+            });
+          } else {
+            console.log('未找到昵称数据');
+          }
+        },
+        fail: (err) => {
+          console.error('获取昵称失败', err);
         }
-      },
-      fail: (err) => {
-        console.error('获取昵称失败', err);
-      }
-    });
-    }
+      });
+  }
 
 
 
