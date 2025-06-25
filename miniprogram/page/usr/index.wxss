@@ -70,6 +70,20 @@
   margin-top: 20rpx;
 }
 
+/* 外层容器，负责居中 */
+.history-wrapper {
+  width: 200rpx;
+  height: 100rpx;
+  position: relative;
+  margin: 40rpx auto; /* 水平居中 + 上下间距 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8f8f8;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
 .btn-group button {
   width: 120rpx;
   height: 60rpx;
@@ -81,11 +95,12 @@
 
 
 .nickname-input {
-  flex: 1;
-  padding: 10rpx 15rpx;
-  font-size: 28rpx;
+  width: 100%; /* 占满容器宽度，也可改成具体值 */
+  height: 80rpx; /* 👈 设置高度更明显 */
+  padding: 20rpx 24rpx; /* 👈 增加内边距提升视觉大小 */
+  font-size: 30rpx;
   border: 1rpx solid #ccc;
-  border-radius: 6rpx;
+  border-radius: 12rpx;
   outline: none;
   box-sizing: border-box;
 }
@@ -111,15 +126,26 @@ button:active {
 }
 
 /* 历史记录按钮 */
+/* 按钮样式 */
 .history-btn {
   display: flex;
   align-items: center;
-  gap: 10rpx;
-  margin-bottom: 30rpx;
+  gap: 16rpx;
+  padding: 20rpx 40rpx;
+  border: 2rpx solid #cccccc;
+  border-radius: 16rpx;
+  background-color: #ffffff;
+  font-size: 32rpx;
+  color: #333;
   cursor: pointer;
   user-select: none;
-  position: relative;
-  /* top 由 inline 样式动态控制 */
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+
+  /* 👇 新增：让按钮最小有足够宽度 */
+  min-width: 200rpx;
+
+  /* 👇 防止文字换行 */
+  white-space: nowrap;
 }
 
 .history-icon {

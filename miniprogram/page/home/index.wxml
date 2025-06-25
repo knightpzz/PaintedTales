@@ -1,16 +1,24 @@
 <view class="container">
+  <view wx:if="{{userInfo}}">
+    <view class="user-info">
+      <image src="{{currentAvatar}}" class="avatar"></image>
+      <text>{{userInfo.nickName}}</text>
+    </view>
+
+  </view>
+
 
   <image class="background" src="../../image/background_history.png" mode="aspectFill" />
 
 
   <!-- 用户信息：放到页面右上角 -->
-  <!-- <view class="user-info"> -->
+  
     <!-- 如果用户有头像，则显示该头像 -->
-    <!-- <image src="{{currentAvatar}}" class="avatar" bindtap="changeAvatar"></image> -->
+    
     <!-- 显示昵称 -->
     <!-- <view class="nickname" bindtap="editNickname">
-      <text>{{userInfo.nickName}}</text>
-    </view>
+     
+    
   </view> -->
 
   <!-- 弹出输入框修改昵称 -->

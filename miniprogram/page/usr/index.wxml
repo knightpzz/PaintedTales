@@ -24,13 +24,19 @@
   </view>
 </view>
 
-      <view class="history-btn" style="top: {{navTop}}rpx;" bindtap="goToHistory">
-        <image src="../../image/play.png" class="history-icon"></image>
-        <text>历史记录</text>
-      </view>
+<view class="history-wrapper">
+  <view class="history-btn" bindtap="goToHistory">
+    <image src="../../image/play.png" class="history-icon"></image>
+    <text>历史记录</text>
+  </view>
+</view>
+
+      
     </view>
   </view>
 </view>
+
+
 
 <!-- 自定义弹窗 -->
 <view wx:if="{{showModal}}" class="modal">

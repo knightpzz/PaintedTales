@@ -43,6 +43,22 @@ Page({
   // 页面加载时获取全局用户信息
   onLoad() {
 
+    if (!(getApp().globalData.userInfo)) {
+      wx.showModal({
+        title: '提示',
+        content: '请到用户界面登录',
+        showCancel: false, // 只显示确定按钮
+        success(res) {
+          if (res.confirm) {
+            // 可以选择跳转
+            wx.reLaunch({
+              url: '/page/usr/index' // 替换为你的主页路径
+            });
+          }
+        }
+      });
+    };
+
     wx.cloud.init({
       env: 'cloud1-8gmijxcx249b2dbf'  // 请使用正确的环境ID
     });
