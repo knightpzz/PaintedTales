@@ -20,17 +20,20 @@ getUserOpenId(callback) {
       success() {
         wx.cloud.callFunction({
           name: 'login',
-          data: {
-            action: 'openid'
-          },
           success: res => {
-            self.globalData.openid = res.result.openid;
-            callback(null, self.globalData.openid);
+            if (res.result && res.result.openid) {
+              self.globalData.openid = res.result.openid
+              callback(null, res.result.openid)
+            } else {
+              console.error('云函数 login 返回异常：', res)
+              callback(new Error('获取openid失败，返回值为空'))
+            }
           },
           fail: err => {
-            callback(err);
+            console.error('拉取用户openid失败', err)
+            callback(err)
           }
-        });
+        });        
       }
     });
   }
